@@ -2,7 +2,7 @@
 
 The public portfolio remains at `/`. Admin login is at `/admin/`, with the browser-protected dashboard at `/admin/dashboard/`. Skills and Projects have content management; Certifications, Experience, and Achievements have saved-record previews and database tables prepared for future editors. All five public content sections load from Supabase in the existing card design. The three prepared admin sections preview their saved records; their editors remain a future update.
 
-The replacement source is already pushed on `codex/github-pages-portfolio` (initial commit `ee65b3c`). Supabase project URL and public API key are still missing, so real authentication, database writes, and uploads are not connected. `main` and the live website still use the old portfolio at `f746afc`, backed up on remote branch `backup-before-nextjs-pages-2026-10-06`. Complete this guide before publishing the replacement; its local public preview can display the existing snapshot while setup is incomplete.
+The hosted schema and seed are applied, the `project-images` bucket and its admin policies are configured, and production Auth URLs are saved. Both public environment values are configured in ignored `.env.local` and GitHub Actions repository Variables. Hosted database authorization checks and anonymous API reads/write denial passed. Administrator account creation, real login, CRUD, uploads, and live Pages verification remain to be completed. Reuse this configured project; the steps below also document setup for another project. The previous site source is preserved on `backup-before-nextjs-pages-2026-10-06` at `f746afc`.
 
 ## 1. Create your Supabase project
 
@@ -119,11 +119,11 @@ The production build exports static files to `out/`. After building, run `npm st
 
 Optionally run `supabase/security-smoke.sql` in SQL Editor after applying the schema and seed. It switches PostgreSQL roles and JWT claims to check public and non-admin restrictions, admin skill CRUD, draft visibility, self-enrollment prevention, and membership revocation. Its fixtures roll back. If the script fails, execute `ROLLBACK`. This tests database authorization, not real password authentication or the Storage API.
 
-Until the live checks run against your configured project, real Auth, database writes, and Storage behavior remain unverified. Public content updates load when the portfolio is opened or refreshed; every content edit does not require source deployment. Failed public Supabase reads fall back to the original content snapshot, so seeing the original portfolio alone does not prove successful configuration. A successful empty query remains empty rather than restoring deleted content.
+The hosted SQL policy test passed with its fixtures rolled back, and anonymous API checks confirmed public reads with write and admin-membership access denied. Real administrator login, content edits, and Storage uploads still require the live checks above. Public content updates load when the portfolio is opened or refreshed; every content edit does not require source deployment. Failed public Supabase reads fall back to the original content snapshot, so seeing the original portfolio alone does not prove successful configuration. A successful empty query remains empty rather than restoring deleted content.
 
 ## 8. Replace the old GitHub Pages website
 
-Follow [GITHUB_PAGES_DEPLOYMENT.md](GITHUB_PAGES_DEPLOYMENT.md) to configure both repository Actions Variables, verify the prepared `codex/github-pages-portfolio` branch, and fast-forward the existing `main` branch without rewriting history. The old source is already backed up. Use **Settings → Pages → Source → GitHub Actions** and the included workflow that deploys `out/` on pushes to `main`; the public address remains **https://derfini-ct.github.io/**.
+Follow [GITHUB_PAGES_DEPLOYMENT.md](GITHUB_PAGES_DEPLOYMENT.md) to verify the prepared source and publish through the existing repository without rewriting history. Both repository Actions Variables are configured and the old source is backed up. Use **Settings → Pages → Source → GitHub Actions** and the included workflow that deploys `out/` on pushes to `main`; the public address remains **https://derfini-ct.github.io/**.
 
 In Supabase **Authentication → URL Configuration**, set **Site URL** to `https://derfini-ct.github.io/` and add **Redirect URL** `https://derfini-ct.github.io/admin/`. Optionally add `http://localhost:3000/admin/` for local redirect flows. The current email/password form navigates inside the application after login and does not require a callback endpoint. These exact existing routes avoid broad wildcards or unimplemented auth routes. [Supabase redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls)
 
@@ -136,7 +136,7 @@ Build-time configuration changes require a new workflow run; live content edits 
 | Setup notice / no live content management | Both environment values are set, contain real values, and the local development server was restarted or the GitHub Pages workflow rebuilt after the environment change. |
 | Invalid API key or failed network requests | URL and key belong to the same project; the project is active; the key is publishable or `anon`, not a secret key. |
 | Login succeeds but dashboard access is refused | Confirm the authenticated user's UID is present in `public.admin_users`; an email match alone is insufficient. |
-| Invalid login credentials / email not confirmed | Use the account password created in Supabase and confirm the email. Public signup is intentionally disabled. |
+| Invalid login credentials / email not confirmed | Use the account password created in Supabase and confirm the email. Keep public signup disabled in Auth settings. |
 | Missing table or RLS error | Run the complete `schema.sql` against the same project referenced by the environment file. Check both grants and policies. |
 | Projects absent publicly | Ensure their statuses are `unspecified`, `in_progress`, or `completed`; check display order and that seed data was loaded. |
 | Image upload denied | Bucket ID is exactly `project-images`, account is allowlisted, Storage policies were applied, file is JPEG/PNG/WebP and no larger than 5 MB. |

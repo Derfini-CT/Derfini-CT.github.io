@@ -4,9 +4,9 @@ Repository: [Derfini-CT/Derfini-CT.github.io](https://github.com/Derfini-CT/Derf
 
 Public address: [https://derfini-ct.github.io/](https://derfini-ct.github.io/)
 
-This checkout retains the old repository's Git history. The replacement source is already committed and pushed on **codex/github-pages-portfolio**, starting with **ee65b3c**. The old **main** commit **f746afc** is backed up on remote branch **backup-before-nextjs-pages-2026-10-06**. **main and the live site still contain the old portfolio.** The Supabase project URL and public key are still missing; complete their setup before publishing the replacement.
+This checkout retains the repository's Git history. The replacement source was prepared on **codex/github-pages-portfolio**, starting with **ee65b3c**. The previous site commit **f746afc** is preserved on remote branch **backup-before-nextjs-pages-2026-10-06**. Hosted Supabase schema, seed, Storage, production Auth URLs, and both public environment values are configured. Backend policy checks passed; administrator account/login/edit/upload checks and live Pages verification remain separate completion checks.
 
-The new site builds a Next.js static export and deploys `out/` through GitHub Actions. Supabase supplies live content, authentication, and image Storage after configuration.
+The site builds a Next.js static export and deploys `out/` through GitHub Actions. Supabase supplies live content, authentication, and image Storage.
 
 ## 1. Use the prepared migration branch
 
@@ -42,9 +42,9 @@ This retrieves the prepared source and existing history; no ZIP overlay, old-fil
 
 ## 2. Connect Supabase
 
-Reuse the existing Supabase project if already set up. Otherwise follow [SUPABASE_SETUP.md](SUPABASE_SETUP.md): run `supabase/schema.sql`, then `supabase/seed.sql`; create a confirmed email/password Auth user; allowlist its UID with `supabase/create-admin.sql`; and create the public `project-images` bucket. Table RLS and Storage policies admit writes only for allowlisted administrators.
+Reuse the configured Supabase project. Its schema, seed, public `project-images` bucket, and admin-only policies are already applied. Follow [SUPABASE_SETUP.md](SUPABASE_SETUP.md) to create a confirmed email/password Auth user and allowlist its UID with `supabase/create-admin.sql`. The same guide documents database/Storage setup if creating another project.
 
-In the GitHub repository, open **Settings → Secrets and variables → Actions → Variables → New repository variable**. Create:
+Both repository variables are configured. To inspect or update them, open **Settings → Secrets and variables → Actions → Variables**; use **New repository variable** when configuring another repository:
 
 | Name | Value |
 | --- | --- |
@@ -53,7 +53,7 @@ In the GitHub repository, open **Settings → Secrets and variables → Actions 
 
 The workflow uses repository `vars`, so put these under **Variables**. These are public browser settings; never supply a service-role/secret key, database password, or admin password. The Next.js export embeds these values while building. After changing either variable, run the build/deployment workflow again. [GitHub repository variables](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables), [Next.js public environment variables](https://nextjs.org/docs/app/guides/environment-variables)
 
-Configure **Supabase → Authentication → URL Configuration**:
+These production URLs are saved under **Supabase → Authentication → URL Configuration**; preserve them:
 
 | Setting | Value |
 | --- | --- |
@@ -119,7 +119,7 @@ If Git requests an author identity, configure your own name and GitHub email wit
 
 ## 5. Confirm deployment
 
-After the replacement reaches `main`, open **Actions**, select the new Pages workflow, and wait for both build and deploy jobs to succeed. Pushing `main` triggers it; **Run workflow** on `main` can trigger it again after changing repository variables. The workflow may not appear in the default-branch Actions list until it reaches `main`. Check its deployment URL, then visit **https://derfini-ct.github.io/**. The old site remains the expected live result until the new deployment succeeds.
+After the replacement reaches `main`, open **Actions**, select the new Pages workflow, and wait for both build and deploy jobs to succeed. Pushing `main` triggers it; **Run workflow** on `main` can trigger it again after changing repository variables. The workflow may not appear in the default-branch Actions list until it reaches `main`. Check its deployment URL, then visit **https://derfini-ct.github.io/**. Verify the published result after the deployment succeeds.
 
 - In a private browser window, `/` stays public with the existing design, resume, LinkedIn, GitHub button, and VLSI skill.
 - Directly reload `/admin/` and `/admin/dashboard/skills/` to confirm exported routes resolve without 404.
