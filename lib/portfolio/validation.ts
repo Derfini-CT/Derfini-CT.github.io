@@ -15,3 +15,9 @@ export function validateProjectImage(file: Pick<File, "size" | "type" | "name">)
   if (file.size === 0 || file.size > 5 * 1024 * 1024) throw new Error("Images must be between 1 byte and 5 MB.");
   return extension;
 }
+const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable();
+const optionalDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a full date.").nullable();
+export const certificationInputSchema = z.object({ title: z.string().trim().min(1, "Enter a certification title.").max(200), issuer: optionalText(200), description: z.string().trim().max(10000), credential_url: optionalUrl, issued_on: optionalDate, score: z.number().min(0, "Scores run from 0 to 100.").max(100, "Scores run from 0 to 100.").nullable(), recognition: optionalText(100), display_order: z.number().int().nonnegative() });
+export const experienceInputSchema = z.object({ title: z.string().trim().min(1, "Enter a role title.").max(200), organization: optionalText(200), description: z.string().trim().max(10000), technologies: z.array(z.string().trim().min(1).max(100)).max(30), started_on: optionalDate, ended_on: optionalDate, display_order: z.number().int().nonnegative() })
+  .refine(value => !value.started_on || !value.ended_on || value.ended_on >= value.started_on, { message: "The end date must be on or after the start date.", path: ["ended_on"] });
+export const achievementInputSchema = z.object({ title: z.string().trim().min(1, "Enter an achievement title.").max(200), description: z.string().trim().max(10000), event_name: optionalText(200), recognition: optionalText(100), achieved_on: optionalDate, evidence_url: optionalUrl, display_order: z.number().int().nonnegative() });

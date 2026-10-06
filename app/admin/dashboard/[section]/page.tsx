@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation";
 import ContentManager from "@/components/admin/content-manager";
-import PreparedSection from "@/components/admin/prepared-section";
+const sections = ["skills", "projects", "certifications", "experience", "achievements"] as const;
 export const dynamicParams = false;
 export function generateStaticParams() {
-  return ["skills", "projects", "certifications", "experience", "achievements"].map(section => ({ section }));
+  return sections.map(section => ({ section }));
 }
 export default async function SectionPage({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;
-  if (section === "skills" || section === "projects") return <ContentManager key={section} section={section} />;
-  if (section === "certifications" || section === "experience" || section === "achievements") return <PreparedSection key={section} section={section} />;
-  notFound();
+  const match = sections.find(name => name === section);
+  if (!match) notFound();
+  return <ContentManager key={match} section={match} />;
 }

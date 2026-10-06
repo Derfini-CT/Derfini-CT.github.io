@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "prebuild": "node scripts/check-public-env.mjs --allow-missing",
-    "postbuild": "node scripts/check-static-export.mjs"
+    "postbuild": "node scripts/check-static-export.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -53,7 +54,9 @@
     "typescript": "5.9.3"
   },
   "overrides": {
-    "serve": { "compression": "1.8.2" }
+    "serve": {
+      "compression": "1.8.2"
+    }
   },
   "type": "module"
 }
