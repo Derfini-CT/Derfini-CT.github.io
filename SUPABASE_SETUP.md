@@ -19,8 +19,9 @@ In Supabase, open **SQL Editor → New query**. Execute the files in this order,
 
 1. `supabase/schema.sql`
 2. `supabase/seed.sql`
+3. `supabase/site-content.sql`
 
-The schema creates `skills`, `projects`, `certifications`, `experiences`, and `achievements`, with UUID IDs, creation/update timestamps, and display order. It also creates `public.admin_users`, which links approved administrators to `auth.users` by `user_id`, and the `is_portfolio_admin` membership function.
+The schema creates `skills`, `projects`, `certifications`, `experiences`, and `achievements`, with UUID IDs, creation/update timestamps, and display order. `site-content.sql` adds `site_content`, a single row holding the rest of the page text (name, links, hero, about, education, section headings, contact and footer) that the admin **Site content** page edits. It starts empty, so the site shows its built-in text until the first save. Projects that already ran the first two files only need to run this one. It also creates `public.admin_users`, which links approved administrators to `auth.users` by `user_id`, and the `is_portfolio_admin` membership function.
 
 `schema.sql` contains the required table grants, RLS policies, update timestamp triggers, and Storage object policies. You do not need to paste a second, different policy script. `seed.sql` initializes the supplied portfolio content, including **VLSI**. Run the seed once before editing your live content; review it before applying it again after making changes.
 

@@ -1,3 +1,4 @@
+import type { SiteContent } from "./site";
 export const skillCategories = [
   { key: "programming", title: "Programming", description: "Languages and core programming concepts." },
   { key: "technical", title: "Embedded & technical", description: "Practical experience through embedded systems work." },
@@ -12,6 +13,6 @@ export interface Project { id: string; title: string; short_description: string;
 export interface Certification { id: string; title: string; issuer: string | null; description: string; credential_url: string | null; issued_on: string | null; score: number | null; recognition: string | null; display_order: number; created_at: string; updated_at: string }
 export interface Experience { id: string; title: string; organization: string | null; description: string; technologies: string[]; started_on: string | null; ended_on: string | null; display_order: number; created_at: string; updated_at: string }
 export interface Achievement { id: string; title: string; description: string; event_name: string | null; recognition: string | null; achieved_on: string | null; evidence_url: string | null; display_order: number; created_at: string; updated_at: string }
-export interface PortfolioContent { skills: Skill[]; projects: Project[]; certifications: Certification[]; experiences: Experience[]; achievements: Achievement[]; source: "supabase" | "snapshot" }
+export interface PortfolioContent { site: SiteContent; skills: Skill[]; projects: Project[]; certifications: Certification[]; experiences: Experience[]; achievements: Achievement[]; source: "supabase" | "snapshot" }
 export interface PublicSupabaseConfig { url: string; anonKey: string }
 export const projectImageBucket = "project-images";
