@@ -2,7 +2,7 @@
 
 The public portfolio remains at `/`. Admin login is at `/admin/`, with the browser-protected dashboard at `/admin/dashboard/`. Skills and Projects have content management; Certifications, Experience, and Achievements have saved-record previews and database tables prepared for future editors. All five public content sections load from Supabase in the existing card design. The three prepared admin sections preview their saved records; their editors remain a future update.
 
-Supabase has not been connected to a real project yet because no project URL or public API key was supplied. Database writes, real authentication, and uploads become available after completing this guide. The public portfolio can still display its existing content while setup is incomplete.
+The replacement source is already pushed on `codex/github-pages-portfolio` (initial commit `ee65b3c`). Supabase project URL and public API key are still missing, so real authentication, database writes, and uploads are not connected. `main` and the live website still use the old portfolio at `f746afc`, backed up on remote branch `backup-before-nextjs-pages-2026-10-06`. Complete this guide before publishing the replacement; its local public preview can display the existing snapshot while setup is incomplete.
 
 ## 1. Create your Supabase project
 
@@ -123,7 +123,7 @@ Until the live checks run against your configured project, real Auth, database w
 
 ## 8. Replace the old GitHub Pages website
 
-Follow [GITHUB_PAGES_DEPLOYMENT.md](GITHUB_PAGES_DEPLOYMENT.md) to replace the existing site in **Derfini-CT/Derfini-CT.github.io** while preserving Git history and the public address **https://derfini-ct.github.io/**. Use **Settings → Pages → Source → GitHub Actions**, repository Actions Variables for both public values, and the included workflow that deploys `out/` on pushes to `main`.
+Follow [GITHUB_PAGES_DEPLOYMENT.md](GITHUB_PAGES_DEPLOYMENT.md) to configure both repository Actions Variables, verify the prepared `codex/github-pages-portfolio` branch, and fast-forward the existing `main` branch without rewriting history. The old source is already backed up. Use **Settings → Pages → Source → GitHub Actions** and the included workflow that deploys `out/` on pushes to `main`; the public address remains **https://derfini-ct.github.io/**.
 
 In Supabase **Authentication → URL Configuration**, set **Site URL** to `https://derfini-ct.github.io/` and add **Redirect URL** `https://derfini-ct.github.io/admin/`. Optionally add `http://localhost:3000/admin/` for local redirect flows. The current email/password form navigates inside the application after login and does not require a callback endpoint. These exact existing routes avoid broad wildcards or unimplemented auth routes. [Supabase redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls)
 

@@ -1,12 +1,12 @@
 # Derfini C T — Portfolio
 
-The existing React + Tailwind portfolio prepared for **GitHub Pages** at **https://derfini-ct.github.io/**. This checkout preserves the history of **Derfini-CT/Derfini-CT.github.io** and replaces its previous site files with the portfolio source. The public colors, typography, layout, spacing, cards, and animations are preserved.
+The existing React + Tailwind portfolio prepared for **GitHub Pages** at **https://derfini-ct.github.io/**. This checkout preserves the history of **Derfini-CT/Derfini-CT.github.io**. The replacement source is committed and pushed on **codex/github-pages-portfolio**, starting with commit **ee65b3c**. **main** and the live site still contain the old portfolio at **f746afc**. The public colors, typography, layout, spacing, cards, and animations are preserved in the replacement.
 
 ## Publish
 
-Follow [GITHUB_PAGES_DEPLOYMENT.md](GITHUB_PAGES_DEPLOYMENT.md). The included `.github/workflows/deploy-pages.yml` uses Node.js **24.x**, installs with `npm ci`, builds with `npm run build`, and publishes the generated **`out/`** directory. Set repository **Settings → Pages → Source → GitHub Actions**.
+Follow [GITHUB_PAGES_DEPLOYMENT.md](GITHUB_PAGES_DEPLOYMENT.md) to finish Supabase setup and fast-forward the existing `main` branch to the prepared source. The included `.github/workflows/deploy-pages.yml` uses Node.js **24.x**, installs with `npm ci`, builds with `npm run build`, and publishes the generated **`out/`** directory. Set repository **Settings → Pages → Source → GitHub Actions** when ready to publish the replacement.
 
-Add the two public Supabase values under **Settings → Secrets and variables → Actions → Variables** before publishing:
+The required Supabase values are still missing. Add them under **Settings → Secrets and variables → Actions → Variables** before publishing:
 
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
@@ -58,6 +58,6 @@ Projects support JPEG/PNG/WebP uploads up to 5 MB and confirmed image replacemen
 
 See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for schema/RLS SQL, seed content including VLSI, administrator provisioning, the `project-images` bucket, and Auth URLs. Reuse the existing Supabase project if already configured. No real Supabase values or account passwords are included in this source.
 
-`.gitignore` excludes `.env.local`, dependencies, generated `out/` and `.next` output, and local tool state. Keep `.git` in this existing checkout to retain repository history. Use a backup branch before committing the replacement; never reset or force-push the old repository history.
+`.gitignore` excludes `.env.local`, dependencies, generated `out/` and `.next` output, and local tool state. Keep `.git` in this existing checkout to retain repository history. The old `main` commit **f746afc** is already backed up on remote branch **backup-before-nextjs-pages-2026-10-06**; never reset or force-push the repository history.
 
-The contact form retains its mailto draft behavior. Missing personal facts retain their placeholders. Source preparation alone does not publish the GitHub Pages replacement; follow the deployment guide and confirm a successful Actions deployment.
+The contact form retains its mailto draft behavior. Missing personal facts retain their placeholders. Pushing the migration branch has not replaced the live site. Finish Supabase configuration, advance `main` using the deployment guide, and confirm a successful Actions deployment.

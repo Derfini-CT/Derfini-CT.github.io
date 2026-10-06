@@ -4,9 +4,11 @@ Repository: [Derfini-CT/Derfini-CT.github.io](https://github.com/Derfini-CT/Derf
 
 Public address: [https://derfini-ct.github.io/](https://derfini-ct.github.io/)
 
-This prepared checkout retains the old repository's Git history. The replacement builds a Next.js static export and deploys `out/` through GitHub Actions; Supabase supplies live content, authentication, and image Storage. The files are prepared locally. They have not been pushed or published automatically.
+This checkout retains the old repository's Git history. The replacement source is already committed and pushed on **codex/github-pages-portfolio**, starting with **ee65b3c**. The old **main** commit **f746afc** is backed up on remote branch **backup-before-nextjs-pages-2026-10-06**. **main and the live site still contain the old portfolio.** The Supabase project URL and public key are still missing; complete their setup before publishing the replacement.
 
-## 1. Preserve the previous site
+The new site builds a Next.js static export and deploys `out/` through GitHub Actions. Supabase supplies live content, authentication, and image Storage after configuration.
+
+## 1. Use the prepared migration branch
 
 Open PowerShell in the prepared **existing checkout**:
 
@@ -19,27 +21,24 @@ git log -1 --oneline
 git status --short
 ```
 
-Confirm `origin` is `https://github.com/Derfini-CT/Derfini-CT.github.io.git` and the branch is `main`. If the remote has changed since this checkout was prepared, integrate those changes before pushing; do not overwrite newer remote commits.
+Confirm `origin` is `https://github.com/Derfini-CT/Derfini-CT.github.io.git` and the branch is `codex/github-pages-portfolio`. Its initial replacement commit is `ee65b3c`; documentation updates may follow it. Check that the working tree is clean before switching branches. If remote `main` has advanced, integrate its changes before publishing; do not overwrite newer remote commits.
 
-Before committing the replacement, create a backup branch from the old committed site:
+The backup already exists locally and remotely at the old committed site **f746afc**. Inspect it instead of creating a new backup from the migration branch:
 
 ```powershell
-git branch backup-before-nextjs-pages-2026-10-06 HEAD
-git push origin backup-before-nextjs-pages-2026-10-06
+git log -1 --oneline origin/backup-before-nextjs-pages-2026-10-06
 ```
 
-If that branch name already exists, inspect it and reuse the correct backup or choose a unique name. The backup preserves the old committed `index.html`, `style.css`, and other tracked files. The prepared working tree already removes the old root `index.html` and `style.css`; their previous versions remain in Git history and the backup branch. Do not delete `.git`, reset history, or force-push.
+The backup preserves the old `index.html`, `style.css`, and other tracked files. Their removal is already committed in the migration branch; their previous versions remain in Git history and the backup. Do not delete `.git`, reset history, force-push, or recreate the backup at the replacement commit.
 
-If using a source ZIP rather than this checkout, first clone the existing repository and make its backup branch:
+On another computer, clone the prepared branch directly:
 
 ```powershell
-git clone https://github.com/Derfini-CT/Derfini-CT.github.io.git
+git clone --branch codex/github-pages-portfolio https://github.com/Derfini-CT/Derfini-CT.github.io.git
 Set-Location -LiteralPath ./Derfini-CT.github.io
-git branch backup-before-nextjs-pages-2026-10-06
-git push origin backup-before-nextjs-pages-2026-10-06
 ```
 
-Copy the extracted source contents (including `.github`, `.gitignore`, and `.env.example`) into this clone while preserving `.git`. Remove only the old root `index.html` and `style.css` after backing up, and review the diff before committing. Do not create a new repository or run `git init` over an unrelated directory.
+This retrieves the prepared source and existing history; no ZIP overlay, old-file deletion, new repository, or `git init` is needed. If applying further files from a ZIP, preserve `.git`, review the diff, and commit those changes on the migration branch.
 
 ## 2. Connect Supabase
 
@@ -70,7 +69,7 @@ In **Settings → Pages → Build and deployment → Source**, choose **GitHub A
 
 If an older custom workflow also publishes Pages, disable it in **Actions → old workflow → … → Disable workflow** before triggering this replacement. Keep the new workflow enabled. Switching away from **Deploy from a branch** removes the old branch publishing source; use one active deployment workflow so an older build cannot replace the new site. [Disable a workflow](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows)
 
-## 4. Build and push
+## 4. Verify, then fast-forward main
 
 With Node.js 24.x and npm, run locally:
 
@@ -89,24 +88,38 @@ npm run build
 
 Use `npm start` to preview the built files locally. CI uses `npm ci` with the supplied lockfile. The build creates `out/index.html`, `out/admin/index.html`, and exported dashboard directories. `trailingSlash: true` lets Pages serve their directory indexes. Images load directly without a Next.js image server. This user-site repository serves `/`, so it needs no repository-name `basePath`. [Next.js static export](https://nextjs.org/docs/app/guides/static-exports)
 
-Review and commit using normal Git history:
+The source replacement is already committed and pushed. If you make additional source or documentation changes, review and save them on the migration branch first:
 
 ```powershell
 git add -A
 git status --short
 git ls-files .env.local
 git diff --cached --stat
-git commit -m "Replace existing portfolio with Next.js and Supabase"
+git commit -m "Update prepared GitHub Pages portfolio"
+git push origin codex/github-pages-portfolio
+```
+
+Skip that commit block if there are no changes. `git ls-files .env.local` should return nothing. Dependencies and generated output stay ignored. Authenticate using your normal Git credential flow.
+
+After Supabase configuration and build verification, with a clean working tree, advance `main` using normal history:
+
+```powershell
+git fetch origin
+git switch codex/github-pages-portfolio
+git pull --ff-only origin codex/github-pages-portfolio
+git switch main
+git pull --ff-only origin main
+git merge --ff-only codex/github-pages-portfolio
 git push origin main
 ```
 
-`git ls-files .env.local` should return nothing. Include `.env.example`, workflow, source, SQL, and documentation; dependencies and generated output stay ignored. Authenticate using your normal Git credential flow. If `main` advanced, integrate its changes before pushing; do not force-push.
+This moves `main` forward to the prepared branch; it does not reset history or change the backup. If a fast-forward step fails because `main` advanced independently, stop and integrate its changes into the migration branch normally before retrying. Do not force-push.
 
 If Git requests an author identity, configure your own name and GitHub email with `git config --local user.name "YOUR NAME"` and `git config --local user.email "YOUR GITHUB EMAIL"`, then retry the commit. Keep GitHub tokens out of source and remote URLs.
 
 ## 5. Confirm deployment
 
-Open **Actions**, select the new Pages workflow, and wait for both build and deploy jobs to succeed. Pushing `main` triggers it; **Run workflow** can trigger it again after changing repository variables. Check its deployment URL, then visit **https://derfini-ct.github.io/**.
+After the replacement reaches `main`, open **Actions**, select the new Pages workflow, and wait for both build and deploy jobs to succeed. Pushing `main` triggers it; **Run workflow** on `main` can trigger it again after changing repository variables. The workflow may not appear in the default-branch Actions list until it reaches `main`. Check its deployment URL, then visit **https://derfini-ct.github.io/**. The old site remains the expected live result until the new deployment succeeds.
 
 - In a private browser window, `/` stays public with the existing design, resume, LinkedIn, GitHub button, and VLSI skill.
 - Directly reload `/admin/` and `/admin/dashboard/skills/` to confirm exported routes resolve without 404.
