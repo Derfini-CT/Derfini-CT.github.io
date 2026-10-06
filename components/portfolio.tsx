@@ -183,7 +183,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
           {education.map((stop, i) => <li key={stop.year} className={i === education.length - 1 ? "is-current" : ""} style={{ "--i": i } as CSSProperties}>
             <span className="tl-pad" aria-hidden="true" />
             <span className="tl-year">{stop.year}</span>
-            <div className="tl-card"><p className="tl-level">{stop.level}</p><h3>{stop.school}</h3><p className="tl-detail">{stop.detail}</p>{stop.note && <p className="tl-note">{stop.note}</p>}<p className="tl-score"><strong>{stop.score}</strong><span>{stop.unit}</span></p></div>
+            <div className="tl-card"><p className="tl-level">{stop.level}</p><h3>{stop.school}</h3><p className="tl-detail">{stop.detail}</p>{stop.note && <p className="tl-note">{stop.note}</p>}<p className="tl-score"><strong><Count value={Number(stop.score)} decimals={stop.score.split(".")[1]?.length ?? 0} /></strong><span>{stop.unit}</span></p></div>
           </li>)}
         </ol>
       </Section>
