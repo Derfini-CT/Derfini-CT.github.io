@@ -1,5 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import { getPublicSupabaseConfig } from "../supabase/public-config";
+import { getAnonymousSupabaseClient } from "../supabase/client";
 import snapshot from "./initial-content.json";
 import { type PortfolioContent, type Project, type Skill, type Certification, type Experience, type Achievement, projectImageBucket } from "./types";
 
@@ -9,10 +9,7 @@ export async function getPortfolioContent(): Promise<PortfolioContent> {
   const config = getPublicSupabaseConfig();
   if (!config) return portfolioSnapshot;
   // Public reads deliberately do not inherit the persisted administrator session.
-  const supabase = createClient(config.url, config.anonKey, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-    global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
-  });
+  const supabase = getAnonymousSupabaseClient(config);
   const sorted = (table: string, columns: string) => supabase.from(table).select(columns).order("display_order").order("created_at").order("id").abortSignal(AbortSignal.timeout(6000));
   try {
     const [skills, projects, certifications, experiences, achievements] = await Promise.all([

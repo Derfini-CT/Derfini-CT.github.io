@@ -23,5 +23,13 @@ Hosted Supabase checks completed on October 6, 2026:
 - Hosted catalog audit confirmed RLS on all six tables, 22 public database policies, four image policies, five timestamp triggers, no anonymous write privileges, and no remaining test Auth users.
 - Public `project-images` Storage bucket exists with a 5,242,880-byte limit, JPEG/PNG/WebP MIME restrictions, and four admin policies. Real image uploads have not yet been tested.
 - Production Auth Site URL and admin redirect URL are saved. Both public environment values are configured in ignored `.env.local` and GitHub repository Actions Variables; privileged credentials are not included in source.
+- Public Auth settings confirm signup is disabled, email login is enabled, anonymous sign-ins are disabled, and email confirmation remains required.
 
-Administrator account creation, real password login, dashboard CRUD/uploads, and live GitHub Pages verification remain pending. Auth signup settings are being completed separately. The deployment workflow refuses absent/invalid public configuration or a privileged key. Follow `GITHUB_PAGES_DEPLOYMENT.md` and `SUPABASE_SETUP.md` for deployment and remaining end-to-end checks.
+GitHub Pages checks completed on October 6, 2026:
+
+- The initial Actions build and deployment succeeded for commit `de92647`; Pages uses GitHub Actions with HTTPS enforced at `https://derfini-ct.github.io/`.
+- All eight production routes, 20 exported JavaScript chunks, both CSS files, the resume, and the favicon returned HTTP 200. Both CSS files matched the local export byte-for-byte. GitHub and VLSI are present.
+- Browser visits to the dashboard, Skills, and Projects routes while signed out redirected to `/admin/`; the configured login form was available.
+- Live checks identified repeated Auth client creation during React render retries. The client cache fix retains separate authenticated and anonymous clients; lint, build, export checks, 100-call SDK reuse/session isolation checks, and unchanged stylesheet hashes passed. Verify browser console results and the latest Actions run after deploying changes.
+
+Administrator account creation, real password login, dashboard CRUD, and image upload checks remain pending. The deployment workflow refuses absent/invalid public configuration or a privileged key. Follow `GITHUB_PAGES_DEPLOYMENT.md` and `SUPABASE_SETUP.md` for administration and remaining end-to-end checks.
