@@ -1,0 +1,270 @@
+{
+  "skills": [
+    {
+      "id": "10000000-0000-4000-8000-000000000001",
+      "name": "Java",
+      "category": "programming",
+      "level": null,
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000002",
+      "name": "Python",
+      "category": "programming",
+      "level": null,
+      "display_order": 1,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000003",
+      "name": "C",
+      "category": "programming",
+      "level": null,
+      "display_order": 2,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000004",
+      "name": "SQL",
+      "category": "programming",
+      "level": null,
+      "display_order": 3,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000005",
+      "name": "Data structures",
+      "category": "programming",
+      "level": null,
+      "display_order": 4,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000006",
+      "name": "FreeRTOS concepts",
+      "category": "technical",
+      "level": null,
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000007",
+      "name": "Sensor data acquisition",
+      "category": "technical",
+      "level": null,
+      "display_order": 1,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000008",
+      "name": "Sensor data processing",
+      "category": "technical",
+      "level": null,
+      "display_order": 2,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000009",
+      "name": "IoT communication protocols",
+      "category": "technical",
+      "level": null,
+      "display_order": 3,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000010",
+      "name": "Hardware security",
+      "category": "technical",
+      "level": null,
+      "display_order": 4,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000019",
+      "name": "VLSI",
+      "category": "technical",
+      "level": null,
+      "display_order": 5,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000011",
+      "name": "Data analytics",
+      "category": "data",
+      "level": null,
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000012",
+      "name": "Power BI",
+      "category": "data",
+      "level": null,
+      "display_order": 1,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000013",
+      "name": "Tableau",
+      "category": "data",
+      "level": null,
+      "display_order": 2,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000014",
+      "name": "KPI reporting",
+      "category": "data",
+      "level": null,
+      "display_order": 3,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000015",
+      "name": "Arduino IDE",
+      "category": "tools",
+      "level": null,
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000016",
+      "name": "GitHub",
+      "category": "tools",
+      "level": null,
+      "display_order": 1,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000017",
+      "name": "MS Office",
+      "category": "tools",
+      "level": null,
+      "display_order": 2,
+      "created_at": "",
+      "updated_at": ""
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000018",
+      "name": "MATLAB basics",
+      "category": "tools",
+      "level": null,
+      "display_order": 3,
+      "created_at": "",
+      "updated_at": ""
+    }
+  ],
+  "projects": [
+    {
+      "id": "20000000-0000-4000-8000-000000000001",
+      "title": "Solar PV Plant Analysis",
+      "short_description": "A Power BI project focused on the analysis of a solar photovoltaic plant, bringing an engineering subject into a data analytics workflow.",
+      "full_description": "Detailed features, dataset, and outcomes: to be added.",
+      "technologies": [
+        "Power BI",
+        "Solar photovoltaic systems",
+        "Data analysis"
+      ],
+      "github_url": null,
+      "demo_url": null,
+      "image_path": null,
+      "status": "unspecified",
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": ""
+    }
+  ],
+  "certifications": [
+    {
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": "",
+      "id": "30000000-0000-4000-8000-000000000001",
+      "title": "Introduction to Adaptive Signal Processing",
+      "issuer": "NPTEL · IIT Kharagpur",
+      "description": "8-week course · Completion date: to be added",
+      "credential_url": null,
+      "issued_on": null,
+      "score": 65,
+      "recognition": "Elite"
+    }
+  ],
+  "experiences": [
+    {
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": "",
+      "id": "40000000-0000-4000-8000-000000000001",
+      "title": "Embedded Systems Intern",
+      "organization": "Codtech IT Solutions Private Limited",
+      "description": "Programmed real-time embedded systems using FreeRTOS concepts, with sensor data acquisition, processing, and communication protocols for IoT monitoring applications.",
+      "technologies": [
+        "FreeRTOS concepts",
+        "Sensor data",
+        "IoT monitoring"
+      ],
+      "started_on": null,
+      "ended_on": null
+    },
+    {
+      "display_order": 1,
+      "created_at": "",
+      "updated_at": "",
+      "id": "40000000-0000-4000-8000-000000000002",
+      "title": "Data Analytics Intern",
+      "organization": "Feather Softwares",
+      "description": "Built and published interactive Power BI and Tableau dashboards to track key performance indicators and communicate business performance to stakeholders.",
+      "technologies": [
+        "Power BI",
+        "Tableau",
+        "KPI dashboards"
+      ],
+      "started_on": null,
+      "ended_on": null
+    }
+  ],
+  "achievements": [
+    {
+      "display_order": 0,
+      "created_at": "",
+      "updated_at": "",
+      "id": "50000000-0000-4000-8000-000000000001",
+      "title": "Academic performance",
+      "description": "CGPA in Electronics and Communication Engineering at V.S.B. College of Engineering Technical Campus.",
+      "event_name": null,
+      "recognition": "9.45/10",
+      "achieved_on": null,
+      "evidence_url": null
+    },
+    {
+      "display_order": 1,
+      "created_at": "",
+      "updated_at": "",
+      "id": "50000000-0000-4000-8000-000000000002",
+      "title": "NPTEL distinction",
+      "description": "Earned the Elite designation in Introduction to Adaptive Signal Processing from IIT Kharagpur.",
+      "event_name": null,
+      "recognition": "Elite",
+      "achieved_on": null,
+      "evidence_url": null
+    }
+  ]
+}
