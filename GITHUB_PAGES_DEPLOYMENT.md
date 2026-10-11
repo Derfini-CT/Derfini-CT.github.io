@@ -44,6 +44,8 @@ This retrieves the prepared source and existing history; no ZIP overlay, old-fil
 
 Reuse the configured Supabase project. Its schema, seed, public `project-images` bucket, and admin-only policies are already applied. Follow [SUPABASE_SETUP.md](SUPABASE_SETUP.md) to create a confirmed email/password Auth user and allowlist its UID with `supabase/create-admin.sql`. The same guide documents database/Storage setup if creating another project.
 
+Before publishing the category/photo update, open **Supabase → SQL Editor → New query** and run the complete **`supabase/portfolio-management.sql`** as the project owner. Run it after the base `schema.sql`; it includes the earlier `site-content.sql` setup, so there is no need to run both on a fresh project. Existing projects that already applied `site-content.sql` only need the new migration. It retains saved public content, imports existing skill-group headings, adds category RLS and relationships, and extends admin image-upload policies to the `profile/` prefix in the existing bucket. Do not rerun `seed.sql` over portfolio content you have edited. The migration uses the owner SQL Editor; do not add a service-role key, secret key, or database password to the website or deployment workflow.
+
 Both repository variables are configured. To inspect or update them, open **Settings → Secrets and variables → Actions → Variables**; use **New repository variable** when configuring another repository:
 
 | Name | Value |
@@ -125,6 +127,8 @@ After the replacement reaches `main`, open **Actions**, select the new Pages wor
 - Directly reload `/admin/` and `/admin/dashboard/skills/` to confirm exported routes resolve without 404.
 - While signed out, dashboard pages show no admin content and the browser redirects to `/admin/`.
 - Sign in with the allowlisted administrator; test temporary skill/project add, edit, confirmed deletion, and permitted image upload. Refresh the public page to confirm changes without rebuilding.
+- Confirm `/admin/dashboard/categories/` loads, add a category, and assign a temporary skill to it. Rename the category and verify its public heading; an assigned category must be protected from deletion. The skill editor's **Add category** control should create a category without discarding the skill draft.
+- In **Site content**, verify a text edit and education score appear after a public-page refresh. Check **Balanced** and **Original large** name sizes. Optionally upload a JPEG/PNG/WebP portrait up to **5 MiB**, enable it in About, then verify hiding/removing its saved reference. Old image files remain in Storage; no stock portrait or invented personal photo is added.
 - Confirm an Auth user absent from `public.admin_users` cannot use editors or write through the Supabase API. Log out and confirm access is blocked again.
 
 Pages serves public static dashboard files; the browser guards their interface. Supabase RLS protects real database and Storage operations even if someone bypasses the frontend. Real login/write/upload checks remain necessary after Supabase setup and publication.
@@ -133,6 +137,8 @@ If the old page persists, check the new workflow succeeded, Source is **GitHub A
 
 ## 6. Updates and rollback
 
-Source changes use normal commits and pushes to `main`. Dashboard Skills/Projects edits need no Git commit. Certifications, Experience, and Achievements also load dynamically on the public site; their admin editors remain a future update.
+Source changes use normal commits and pushes to `main`. Dashboard content edits need no Git commit or deployment. **Site content** edits the name, About, education/marks, profile links, hero, highlights, headings, soft skills, footer, and all public navigation/button/contact-form wording. Its **Profile** group manages an optional portrait displayed in About; **Hero → Name size** switches between Balanced and Original large without changing the typeface or palette. **Categories** manages skill-group names, descriptions, and order; **Skills → Add category** also creates a group inline. Categories containing skills cannot be deleted until those skills are moved or removed. Skills, Projects, Certifications, Experience, and Achievements all have add/edit/delete editors. Save, then refresh the public page to see content updates.
+
+Profile photos use the public `project-images` bucket and admin-only writes. JPEG, PNG, and WebP files up to 5 MiB are accepted. Hiding a portrait preserves its saved selection; removing/replacing the displayed photo changes its database reference and retains previous files in Storage. No personal photo is invented, and no administrator password or privileged Supabase key belongs in committed files, public environment variables, or GitHub Actions.
 
 To restore the old site quickly, disable the new workflow, then select **Settings → Pages → Source → Deploy from a branch**, **backup-before-nextjs-pages-2026-10-06** (or your actual backup branch), and **/(root)**. This republishes the previous site without rewriting `main`. For a permanent source rollback, revert the replacement commit with normal `git revert REPLACEMENT_COMMIT_SHA` and `git push origin main`; inspect the files and publishing settings before deploying. Reenable the new workflow and **GitHub Actions** source when restoring the new portfolio.

@@ -8,10 +8,14 @@ const text = (max: number) => z.string().max(max);
 const required = (max: number, message: string) => z.string().trim().min(1, message).max(max);
 const webUrl = z.string().trim().max(2048).refine(value => {
   if (!value) return true;
-  try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:"; } catch { return false; }
+  try { const url = new URL(value); return ["https:", "http:"].includes(url.protocol) && !url.username && !url.password; } catch { return false; }
 }, "Use a full link starting with https://");
 // The resume may be a file on this site ("/Derfini_Resume.pdf") or a full link.
-const linkOrPath = z.string().trim().max(2048).refine(value => !value || value.startsWith("/") || /^https?:\/\/\S+$/.test(value), "Use a link starting with https:// or a site path starting with /");
+const linkOrPath = z.string().trim().max(2048).refine(value => {
+  if (!value || (value.startsWith("/") && !value.startsWith("//") && !/[\\\s]/.test(value))) return true;
+  return webUrl.safeParse(value).success;
+}, "Use a link starting with https:// or a site path starting with /");
+const photoPath = z.string().refine(value => !value || /^profile\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(png|jpg|jpeg|webp)$/.test(value), "Choose a profile image using the upload field.");
 
 const heading = z.object({ title: required(160, "Every section needs a heading."), intro: text(600) });
 
@@ -25,6 +29,9 @@ export const siteContentSchema = z.object({
     resumeUrl: linkOrPath,
     location: text(80),
     studyLine: text(80),
+    photoPath,
+    photoAlt: text(160),
+    showPhoto: z.boolean(),
   }),
   hero: z.object({
     kicker: text(80),
@@ -32,6 +39,7 @@ export const siteContentSchema = z.object({
     intro: text(600),
     scopeLeft: text(80),
     scopeRight: text(80),
+    nameSize: z.enum(["balanced", "large"]),
   }),
   highlights: z.array(z.object({ value: required(24, "Each highlight needs a value."), unit: text(16), label: text(80) })).max(6),
   interests: z.array(z.object({ title: required(60, "Each focus area needs a title."), text: text(120) })).length(3),
@@ -55,6 +63,12 @@ export const siteContentSchema = z.object({
   }),
   contact: z.object({ note: text(160) }),
   footer: z.object({ tagline: text(120) }),
+  labels: z.object({
+    nav: z.object({ about: required(40, "Enter a navigation label."), education: required(40, "Enter a navigation label."), skills: required(40, "Enter a navigation label."), projects: required(40, "Enter a navigation label."), experience: required(40, "Enter a navigation label."), certifications: required(40, "Enter a navigation label."), achievements: required(40, "Enter a navigation label."), contact: required(40, "Enter a navigation label.") }),
+    actions: z.object({ resume: text(80), viewResume: text(80), linkedin: text(80), github: text(80), contactMe: text(80), repository: text(80), liveDemo: text(80), keyFeatures: text(80), certificate: text(80), viewDetails: text(80) }),
+    form: z.object({ nameLabel: text(80), namePlaceholder: text(160), emailLabel: text(80), emailPlaceholder: text(160), subjectLabel: text(80), subjectPlaceholder: text(160), messageLabel: text(80), messagePlaceholder: text(300), submit: text(80), help: text(400), draftReady: text(400), openDraft: text(80), copyEmail: text(80), emailCopied: text(80), defaultSubject: text(150), greeting: text(80), from: text(80), replyTo: text(80) }),
+    fallback: z.object({ skills: text(300), projects: text(300), experience: text(300), certifications: text(300), project: text(80), projectDetails: text(1000), organization: text(160), experienceDates: text(160), present: text(40), experienceCategory: text(80), embeddedCategory: text(80), analyticsCategory: text(80), issuer: text(160), completionDetails: text(300), completed: text(80), courseScore: text(80), achievement: text(80), mobileDescription: text(200) }),
+  }),
 });
 export type SiteContent = z.infer<typeof siteContentSchema>;
 
@@ -63,12 +77,14 @@ export const defaultSiteContent: SiteContent = {
     firstName: "Derfini", lastName: "C T", email: "ctderfini@gmail.com",
     linkedin: "https://www.linkedin.com/in/derfini-c-t/", github: "https://github.com/Derfini-CT",
     resumeUrl: "/Derfini_Resume.pdf", location: "Coimbatore", studyLine: "B.E. ECE, 3rd year",
+    photoPath: "", photoAlt: "", showPhoto: false,
   },
   hero: {
     kicker: "Engineering portfolio",
     title: "Electronics and Communication Engineering Student",
     intro: "Exploring the connection between hardware and data. Building practical experience in embedded systems, electronics, and analytics.",
     scopeLeft: "Curiosity. Connected to possibility.", scopeRight: "Learn. Build. Refine.",
+    nameSize: "balanced",
   },
   highlights: [
     { value: "9.45", unit: "/10", label: "Academic CGPA" },
@@ -115,6 +131,12 @@ export const defaultSiteContent: SiteContent = {
   },
   contact: { note: "Your next idea could start with a hello." },
   footer: { tagline: "Electronics. Communication. Possibility." },
+  labels: {
+    nav: { about: "About", education: "Education", skills: "Skills", projects: "Projects", experience: "Experience", certifications: "Certifications", achievements: "Achievements", contact: "Contact" },
+    actions: { resume: "Resume", viewResume: "View resume", linkedin: "LinkedIn", github: "GitHub", contactMe: "Contact me", repository: "Repository", liveDemo: "Live demo", keyFeatures: "Key features", certificate: "Certificate", viewDetails: "View details" },
+    form: { nameLabel: "Your name", namePlaceholder: "Full name", emailLabel: "Email address", emailPlaceholder: "you@company.com", subjectLabel: "Subject", subjectPlaceholder: "What would you like to discuss?", messageLabel: "Message", messagePlaceholder: "Tell me a little about your opportunity or idea…", submit: "Prepare email", help: "Opens your email app with a draft. Send your message there.", draftReady: "Your email draft is ready. No message has been sent by this website.", openDraft: "Open email draft again", copyEmail: "Copy email address", emailCopied: "Email address copied", defaultSubject: "Portfolio enquiry", greeting: "Hello", from: "From", replyTo: "Reply to" },
+    fallback: { skills: "Skills will appear here as they are added.", projects: "Projects will appear here as they are added.", experience: "Experience will appear here as it is added.", certifications: "Certifications will appear here as they are added.", project: "Project", projectDetails: "Detailed features, dataset, and outcomes: to be added.", organization: "Organization: to be added", experienceDates: "Internship dates: to be added", present: "present", experienceCategory: "Experience", embeddedCategory: "Embedded systems", analyticsCategory: "Data analytics", issuer: "Issuer: to be added", completionDetails: "Completion details: to be added", completed: "Completed", courseScore: "Course score", achievement: "Achievement", mobileDescription: "Explore my engineering portfolio." },
+  },
 };
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
@@ -144,8 +166,26 @@ function mergeInto(base: unknown, stored: unknown): unknown {
 
 export function resolveSiteContent(stored: unknown): SiteContent {
   const merged = mergeInto(defaultSiteContent, stored);
-  const parsed = siteContentSchema.safeParse(merged);
-  return parsed.success ? parsed.data : defaultSiteContent;
+  // Repair only invalid branches. A malformed image path or one overlong field
+  // must not replace a visitor's otherwise valid saved name, marks, or biography.
+  function resolve(schema: z.ZodTypeAny, value: unknown, fallback: unknown): unknown {
+    const parsed = schema.safeParse(value);
+    if (parsed.success) return parsed.data;
+    if (schema instanceof z.ZodObject && isPlainObject(value) && isPlainObject(fallback)) {
+      return Object.fromEntries(Object.entries(schema.shape).map(([key, field]) => [key, resolve(field as z.ZodTypeAny, value[key], fallback[key])]));
+    }
+    if (schema instanceof z.ZodArray && Array.isArray(value) && Array.isArray(fallback)) {
+      const repaired = value.flatMap((item, index) => {
+        const repairedItem = schema.element.safeParse(resolve(schema.element, item, fallback[index] ?? blank(fallback[0])));
+        return repairedItem.success ? [repairedItem.data] : [];
+      });
+      const list = schema.safeParse(repaired);
+      return list.success ? list.data : fallback;
+    }
+    return fallback;
+  }
+  const repaired = siteContentSchema.safeParse(resolve(siteContentSchema, merged, defaultSiteContent));
+  return repaired.success ? repaired.data : defaultSiteContent;
 }
 
 export function fullName(profile: SiteContent["profile"]) {

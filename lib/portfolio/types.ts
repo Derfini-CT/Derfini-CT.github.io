@@ -5,7 +5,8 @@ export const skillCategories = [
   { key: "data", title: "Data & visualization", description: "Analysis and dashboards for meaningful reporting." },
   { key: "tools", title: "Software & tools", description: "Tools used for development, analysis, and productivity." },
 ] as const;
-export type SkillCategory = typeof skillCategories[number]["key"];
+export type SkillCategory = string;
+export interface SkillCategoryRecord { id: string; key: string; title: string; description: string; display_order: number; created_at: string; updated_at: string }
 export const projectStatuses = ["unspecified", "draft", "in_progress", "completed", "archived"] as const;
 export const statusLabels: Record<typeof projectStatuses[number], string> = { unspecified: "Not specified", draft: "Draft", in_progress: "In progress", completed: "Completed", archived: "Archived" };
 export interface Skill { id: string; name: string; category: SkillCategory; level: string | null; display_order: number; created_at: string; updated_at: string }
@@ -13,6 +14,6 @@ export interface Project { id: string; title: string; short_description: string;
 export interface Certification { id: string; title: string; issuer: string | null; description: string; credential_url: string | null; issued_on: string | null; score: number | null; recognition: string | null; display_order: number; created_at: string; updated_at: string }
 export interface Experience { id: string; title: string; organization: string | null; description: string; technologies: string[]; started_on: string | null; ended_on: string | null; display_order: number; created_at: string; updated_at: string }
 export interface Achievement { id: string; title: string; description: string; event_name: string | null; recognition: string | null; achieved_on: string | null; evidence_url: string | null; display_order: number; created_at: string; updated_at: string }
-export interface PortfolioContent { site: SiteContent; skills: Skill[]; projects: Project[]; certifications: Certification[]; experiences: Experience[]; achievements: Achievement[]; source: "supabase" | "snapshot" }
+export interface PortfolioContent { site: SiteContent; categories: SkillCategoryRecord[]; skills: Skill[]; projects: Project[]; certifications: Certification[]; experiences: Experience[]; achievements: Achievement[]; profileImageUrl?: string | null; source: "supabase" | "snapshot" }
 export interface PublicSupabaseConfig { url: string; anonKey: string }
 export const projectImageBucket = "project-images";

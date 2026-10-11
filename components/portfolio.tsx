@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
 import { ArrowUpRight, Award, BarChart3, BookOpen, Check, Code2, Copy, Cpu, FileText, Code2 as Github, Link2 as Linkedin, Mail, MapPin, Menu, Radio, Send, ShieldCheck } from "lucide-react";
-import { skillCategories, type PortfolioContent } from "@/lib/portfolio/types";
+import { type PortfolioContent } from "@/lib/portfolio/types";
 import { countable, fullName } from "@/lib/portfolio/site";
 import { safeWebUrl } from "@/lib/portfolio/validation";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -10,20 +10,20 @@ import Scope from "@/components/pcb/scope";
 import ProbeCursor from "@/components/pcb/probe-cursor";
 import "@/components/pcb/pcb.css";
 
-const navigation = [{ id: "about", label: "About" }, { id: "education", label: "Education" }, { id: "skills", label: "Skills" }, { id: "projects", label: "Projects" }, { id: "experience", label: "Experience" }, { id: "certifications", label: "Certifications" }, { id: "achievements", label: "Achievements" }, { id: "contact", label: "Contact" }];
+const navigationIds = ["about", "education", "skills", "projects", "experience", "certifications", "achievements", "contact"] as const;
 // The scope has three fixed channels; their titles and text come from the admin.
 const interestIcons = [Cpu, Radio, BarChart3];
 
 function ExternalLink({ href, children, className = "", magnetic = false }: { href: string; children: ReactNode; className?: string; magnetic?: boolean }) {
   return <a href={href} target="_blank" rel="noopener noreferrer" className={className} data-magnetic={magnetic || undefined}>{children}<span className="sr-only"> (opens in a new tab)</span></a>;
 }
-function Tags({ items }: { items: string[] }) { return <ul className="tags">{items.map(item => <li key={item}>{item}</li>)}</ul>; }
+function Tags({ items }: { items: string[] }) { return <ul className="tags">{items.map((item, index) => <li key={`${index}-${item}`}>{item}</li>)}</ul>; }
 // The resume can be a file served by this site ("/Derfini_Resume.pdf") or a full web link.
 function safeResume(value: string) { return value.startsWith("/") && !value.startsWith("//") ? value : safeWebUrl(value); }
 function formatMonth(value: string) { return new Intl.DateTimeFormat("en", { month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`)); }
 
 function Section({ id, title, intro, className = "", children }: { id: string; title: string; intro?: string; className?: string; children: ReactNode }) {
-  return <section id={id} className={`sec ${className}`} data-reveal><div className="wrap">
+  return <section id={id} tabIndex={-1} className={`sec ${className}`} data-reveal><div className="wrap">
     <header className="sec-head"><span className="sec-trace" aria-hidden="true" /><h2>{title}</h2>{intro && <p>{intro}</p>}</header>
     {children}
   </div></section>;
@@ -82,13 +82,19 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
   const [scrolled, setScrolled] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLParagraphElement>(null);
+  const pendingMenuSection = useRef<string | null>(null);
   const solo = hovered ?? pinned;
   const { site } = content;
   const { profile, sections } = site;
+  const { actions, form, fallback } = site.labels;
+  const navigation = navigationIds.map(id => ({ id, label: site.labels.nav[id] }));
   const name = fullName(profile);
   const resume = safeResume(profile.resumeUrl);
   const linkedin = safeWebUrl(profile.linkedin);
   const github = safeWebUrl(profile.github);
+  const portrait = profile.showPhoto ? safeWebUrl(content.profileImageUrl) : null;
+
+  useEffect(() => { document.title = `${name} | ${site.hero.title}`; }, [name, site.hero.title]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -122,8 +128,8 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
 
   function prepareEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const data = new FormData(event.currentTarget);
-    const body = `Hello ${profile.firstName},\n\n${String(data.get("message")).trim()}\n\nFrom: ${String(data.get("name")).trim()}\nReply to: ${String(data.get("email")).trim()}`;
-    const uri = `mailto:${profile.email}?subject=${encodeURIComponent(String(data.get("subject")).trim() || "Portfolio enquiry")}&body=${encodeURIComponent(body)}`;
+    const body = `${form.greeting} ${profile.firstName},\n\n${String(data.get("message")).trim()}\n\n${form.from}: ${String(data.get("name")).trim()}\n${form.replyTo}: ${String(data.get("email")).trim()}`;
+    const uri = `mailto:${profile.email}?subject=${encodeURIComponent(String(data.get("subject")).trim() || form.defaultSubject)}&body=${encodeURIComponent(body)}`;
     setEmailDraft(uri); setCopied(false); window.location.href = uri;
   }
   async function copyEmail(setter: (value: boolean) => void) {
@@ -137,11 +143,21 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
     <header className={`topbar${scrolled ? " is-scrolled" : ""}`}><div className="wrap topbar-inner">
       <a className="brand" href="#home" aria-label={`${name}, home`}><span className="brand-pad" aria-hidden="true" />{name}</a>
       <nav aria-label="Main navigation" className="topnav">{navigation.map(item => <a key={item.id} href={`#${item.id}`} className={active === item.id ? "is-active" : ""} aria-current={active === item.id ? "location" : undefined}>{item.label}</a>)}</nav>
-      {resume && <a className="btn btn-ghost topbar-resume" href={resume} target="_blank" rel="noopener noreferrer"><FileText size={16} />Resume<span className="sr-only"> (opens in a new tab)</span></a>}
+      {resume && <a className="btn btn-ghost topbar-resume" href={resume} target="_blank" rel="noopener noreferrer"><FileText size={16} />{actions.resume}<span className="sr-only"> (opens in a new tab)</span></a>}
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetTrigger asChild><button type="button" className="menu-btn" aria-label="Open navigation"><Menu size={20} /></button></SheetTrigger>
-        <SheetContent className="pcb-sheet"><SheetHeader><SheetTitle>{name}</SheetTitle><SheetDescription>Explore my engineering portfolio.</SheetDescription></SheetHeader>
-          <nav aria-label="Mobile navigation" className="sheet-nav">{navigation.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)} aria-current={active === item.id ? "location" : undefined}>{item.label}</a>)}{resume && <a href={resume} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>View resume</a>}</nav>
+        <SheetContent className="pcb-sheet" onCloseAutoFocus={event => {
+          const id = pendingMenuSection.current;
+          if (!id) return;
+          event.preventDefault(); pendingMenuSection.current = null;
+          // Wait until the menu's scroll lock has been removed before navigating.
+          requestAnimationFrame(() => {
+            const target = document.getElementById(id);
+            target?.focus({ preventScroll: true });
+            target?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+          });
+        }}><SheetHeader><SheetTitle>{name}</SheetTitle><SheetDescription>{fallback.mobileDescription}</SheetDescription></SheetHeader>
+          <nav aria-label="Mobile navigation" className="sheet-nav">{navigation.map(item => <a key={item.id} href={`#${item.id}`} onClick={event => { event.preventDefault(); pendingMenuSection.current = item.id; history.pushState(null, "", `#${item.id}`); setMenuOpen(false); }} aria-current={active === item.id ? "location" : undefined}>{item.label}</a>)}{resume && <a href={resume} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>{actions.viewResume}</a>}</nav>
         </SheetContent>
       </Sheet>
     </div><span className="topbar-progress" aria-hidden="true" /></header>
@@ -149,23 +165,23 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
     <main id="main">
       <section id="home" className="hero"><div className="wrap">
         <div className="hero-meta"><span className="led" aria-hidden="true" />{site.hero.kicker}{profile.location && <span className="hero-fact"><MapPin size={15} />{profile.location}</span>}{profile.studyLine && <span className="hero-fact"><BookOpen size={15} />{profile.studyLine}</span>}</div>
-        <h1 className="hero-name"><span className="sr-only">{name}</span>
+        <h1 className={`hero-name hero-name--${site.hero.nameSize}`}><span className="sr-only">{name}</span>
           <span className="name-line" aria-hidden="true">{Array.from(profile.firstName).map((ch, i) => <span key={i} className="ltr" style={{ "--i": i } as CSSProperties}>{ch}</span>)}{!profile.lastName && <span className="ltr name-dot" style={{ "--i": profile.firstName.length } as CSSProperties}>.</span>}</span>
           {profile.lastName && <span className="name-line name-line-2" aria-hidden="true">{Array.from(profile.lastName).map((ch, i) => <span key={i} className="ltr" style={{ "--i": i + profile.firstName.length } as CSSProperties}>{ch === " " ? "\u00a0" : ch}</span>)}<span className="ltr name-dot" style={{ "--i": profile.firstName.length + profile.lastName.length } as CSSProperties}>.</span></span>}
         </h1>
         <div className="hero-grid">
           <div><p className="hero-title">{site.hero.title}</p>{site.hero.intro && <p className="hero-intro">{site.hero.intro}</p>}</div>
           <div className="hero-actions">
-            {resume && <a className="btn btn-solid" href={resume} target="_blank" rel="noopener noreferrer" data-magnetic><FileText size={17} />View resume<span className="sr-only"> (opens in a new tab)</span></a>}
-            {linkedin && <ExternalLink href={linkedin} className="btn btn-ghost" magnetic><Linkedin size={17} />LinkedIn</ExternalLink>}
-            {github && <ExternalLink href={github} className="btn btn-ghost" magnetic><Github size={17} />GitHub</ExternalLink>}
-            <a className="text-link" href="#contact">Contact me</a>
+            {resume && <a className="btn btn-solid" href={resume} target="_blank" rel="noopener noreferrer" data-magnetic><FileText size={17} />{actions.viewResume}<span className="sr-only"> (opens in a new tab)</span></a>}
+            {linkedin && <ExternalLink href={linkedin} className="btn btn-ghost" magnetic><Linkedin size={17} />{actions.linkedin}</ExternalLink>}
+            {github && <ExternalLink href={github} className="btn btn-ghost" magnetic><Github size={17} />{actions.github}</ExternalLink>}
+            <a className="text-link" href="#contact">{actions.contactMe}</a>
           </div>
         </div>
         <div className="scope" onMouseLeave={() => setHovered(null)}>
           <div className="scope-screen"><Scope solo={solo} /><div className="scope-top" aria-hidden="true"><span>{site.hero.scopeLeft}</span><span>{site.hero.scopeRight}</span></div></div>
           <div className="channels" role="group" aria-label="My engineering focus">
-            {site.interests.map(({ title, text }, i) => { const Icon = interestIcons[i]; return <button type="button" key={title} className={`channel ch${i + 1}${solo === i ? " is-solo" : ""}`} aria-pressed={pinned === i} onMouseEnter={() => setHovered(i)} onFocus={() => setHovered(i)} onBlur={() => setHovered(null)} onClick={() => setPinned(p => (p === i ? null : i))}>
+            {site.interests.map(({ title, text }, i) => { const Icon = interestIcons[i]; return <button type="button" key={i} className={`channel ch${i + 1}${solo === i ? " is-solo" : ""}`} aria-pressed={pinned === i} onMouseEnter={() => setHovered(i)} onFocus={() => setHovered(i)} onBlur={() => setHovered(null)} onClick={() => setPinned(p => (p === i ? null : i))}>
               <span className="ch-tag">CH{i + 1}</span><span className="ch-copy"><strong>{title}</strong><small>{text}</small></span><Icon size={18} strokeWidth={1.6} aria-hidden="true" />
             </button>; })}
           </div>
@@ -178,6 +194,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
 
       <Section id="about" title={sections.about.title} intro={sections.about.intro} className="about">
         <div className="about-body">
+          {portrait && <figure className="profile-portrait"><img src={portrait} alt={profile.photoAlt || name} width="240" height="300" loading="lazy" /></figure>}
           <p className="about-lead" ref={aboutRef} style={{ "--words": aboutWords.length } as CSSProperties}>{aboutWords.map((word, i) => <span key={i} style={{ "--i": i } as CSSProperties}>{word} </span>)}</p>
           {site.about.body.split(/\n\s*\n/).filter(Boolean).map((paragraph, i) => <p key={i}>{paragraph}</p>)}
           {site.about.note && <div className="about-note"><ShieldCheck size={20} aria-hidden="true" /><p>{site.about.note}</p></div>}
@@ -195,16 +212,15 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
       </Section>
 
       <Section id="skills" title={sections.skills.title} intro={sections.skills.intro}>
-        <div className="chips">{skillCategories.map(({ key }, index) => {
-          const { title, description } = site.skillGroups[key];
-          const Icon = [Code2, Cpu, BarChart3, BookOpen][index];
+        <div className="chips">{content.categories.map(({ key, title, description }, index) => {
+          const Icon = [Code2, Cpu, BarChart3, BookOpen][index % 4];
           const items = content.skills.filter(skill => skill.category === key).map(skill => skill.name);
           return <article className="chip-card" key={key}>
             <header><h3>{title}</h3>{description && <p>{description}</p>}</header>
             {items.length ? <div className="chip">
               <div className="chip-body" aria-hidden="true"><span className="chip-notch" /><Icon size={22} strokeWidth={1.5} /></div>
-              <ul className="chip-pins">{items.map((name, i) => <li key={name} style={{ "--i": i } as CSSProperties}><span className="lead" aria-hidden="true" />{name}</li>)}</ul>
-            </div> : <p className="muted">Skills will appear here as they are added.</p>}
+              <ul className="chip-pins">{items.map((name, i) => <li key={`${i}-${name}`} style={{ "--i": i } as CSSProperties}><span className="lead" aria-hidden="true" />{name}</li>)}</ul>
+            </div> : <p className="muted">{fallback.skills}</p>}
           </article>;
         })}</div>
         {(site.softSkills.title || site.softSkills.text) && <div className="soft-skills"><div>{site.softSkills.title && <h3>{site.softSkills.title}</h3>}{site.softSkills.text && <p>{site.softSkills.text}</p>}</div>{site.softSkills.note && <p className="muted">{site.softSkills.note}</p>}</div>}
@@ -214,15 +230,15 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
         {content.projects.map(project => {
           const repository = safeWebUrl(project.github_url); const demo = safeWebUrl(project.demo_url);
           return <article className="project" key={project.id}>
-            <div className="project-visual">{project.image_url ? <img src={project.image_url} alt={project.title} loading="lazy" /> : <><SolarIllustration /><p className="project-visual-label">{project.technologies[0] || "Project"}</p></>}</div>
+            <div className="project-visual">{project.image_url ? <img src={project.image_url} alt={project.title} loading="lazy" /> : <><SolarIllustration /><p className="project-visual-label">{project.technologies[0] || fallback.project}</p></>}</div>
             <div className="project-body">
               <h3>{project.title}</h3><p className="project-summary">{project.short_description}</p><Tags items={project.technologies} />
-              <div className="project-details"><h4>Key features</h4><p>{project.full_description || "Detailed features, dataset, and outcomes: to be added."}</p></div>
-              {(repository || demo) && <div className="project-links">{repository && <ExternalLink href={repository} className="btn btn-ghost" magnetic><Github size={16} />Repository</ExternalLink>}{demo && <ExternalLink href={demo} className="btn btn-ghost" magnetic><ArrowUpRight size={16} />Live demo</ExternalLink>}</div>}
+              <div className="project-details"><h4>{actions.keyFeatures}</h4><p>{project.full_description || fallback.projectDetails}</p></div>
+              {(repository || demo) && <div className="project-links">{repository && <ExternalLink href={repository} className="btn btn-ghost" magnetic><Github size={16} />{actions.repository}</ExternalLink>}{demo && <ExternalLink href={demo} className="btn btn-ghost" magnetic><ArrowUpRight size={16} />{actions.liveDemo}</ExternalLink>}</div>}
             </div>
           </article>;
         })}
-        {content.projects.length === 0 && <p className="muted">Projects will appear here as they are added.</p>}
+        {content.projects.length === 0 && <p className="muted">{fallback.projects}</p>}
       </Section>
 
       <Section id="experience" title={sections.experience.title} intro={sections.experience.intro}>
@@ -230,15 +246,15 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
           const embedded = experience.title.toLowerCase().includes("embedded");
           const analytics = experience.title.toLowerCase().includes("analytics");
           const Icon = embedded ? Cpu : BarChart3;
-          const category = embedded ? "Embedded systems" : analytics ? "Data analytics" : "Experience";
-          const dates = experience.started_on ? `${formatMonth(experience.started_on)} to ${experience.ended_on ? formatMonth(experience.ended_on) : "present"}` : "Internship dates: to be added";
+          const category = embedded ? fallback.embeddedCategory : analytics ? fallback.analyticsCategory : fallback.experienceCategory;
+          const dates = experience.started_on ? `${formatMonth(experience.started_on)} – ${experience.ended_on ? formatMonth(experience.ended_on) : fallback.present}` : fallback.experienceDates;
           return <article className={`module ${embedded ? "module-ch1" : "module-ch3"}`} key={experience.id}>
             <div className="module-strip"><span className="led" aria-hidden="true" /><span>{category}</span><Icon size={20} strokeWidth={1.5} aria-hidden="true" /></div>
-            <h3>{experience.title}</h3><p className="module-org">{experience.organization || "Organization: to be added"}</p>
+            <h3>{experience.title}</h3><p className="module-org">{experience.organization || fallback.organization}</p>
             <p className="module-desc">{experience.description}</p><Tags items={experience.technologies} /><p className="module-date">{dates}</p>
           </article>;
         })}</div>
-        {content.experiences.length === 0 && <p className="muted">Experience will appear here as it is added.</p>}
+        {content.experiences.length === 0 && <p className="muted">{fallback.experience}</p>}
       </Section>
 
       <Section id="certifications" title={sections.certifications.title} intro={sections.certifications.intro}>
@@ -248,46 +264,46 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
           return <article className="cert" key={certificate.id}>
             {score !== null ? <div className="gauge" style={{ "--score": score } as CSSProperties}>
               <svg viewBox="0 0 120 120" aria-hidden="true"><circle className="gauge-track" cx="60" cy="60" r="52" /><circle className="gauge-fill" cx="60" cy="60" r="52" pathLength="100" /></svg>
-              <p><strong>{score}<span>%</span></strong><small>Course score</small></p>
+              <p><strong>{score}<span>%</span></strong><small>{fallback.courseScore}</small></p>
             </div> : <div className="gauge gauge-empty"><Award size={40} strokeWidth={1.3} aria-hidden="true" /></div>}
             <div className="cert-body">
               {certificate.recognition && <span className="badge"><Award size={14} aria-hidden="true" />{certificate.recognition}</span>}
-              <p className="cert-issuer">{certificate.issuer || "Issuer: to be added"}</p>
+              <p className="cert-issuer">{certificate.issuer || fallback.issuer}</p>
               <h3>{certificate.title}</h3>
-              <p className="cert-desc">{certificate.description || (certificate.issued_on ? `Completed ${formatMonth(certificate.issued_on)}` : "Completion details: to be added")}</p>
-              {credential && <ExternalLink href={credential} className="btn btn-ghost" magnetic><FileText size={16} />Certificate</ExternalLink>}
+              <p className="cert-desc">{certificate.description || (certificate.issued_on ? `${fallback.completed} ${formatMonth(certificate.issued_on)}` : fallback.completionDetails)}</p>
+              {credential && <ExternalLink href={credential} className="btn btn-ghost" magnetic><FileText size={16} />{actions.certificate}</ExternalLink>}
             </div>
           </article>;
         })}
-        {content.certifications.length === 0 && <p className="muted">Certifications will appear here as they are added.</p>}
+        {content.certifications.length === 0 && <p className="muted">{fallback.certifications}</p>}
       </Section>
 
       <Section id="achievements" title={sections.achievements.title} intro={sections.achievements.intro}>
         <div className="wins">{content.achievements.map(achievement => {
           const Icon = achievement.title.toLowerCase().includes("academic") ? BookOpen : Award;
           const evidence = safeWebUrl(achievement.evidence_url);
-          return <article className="win" key={achievement.id}><Icon size={22} strokeWidth={1.5} aria-hidden="true" /><strong>{achievement.recognition || achievement.event_name || "Achievement"}</strong><h3>{achievement.title}</h3><p>{achievement.description}</p>{evidence && <ExternalLink href={evidence} className="text-link">View details</ExternalLink>}</article>;
+          return <article className="win" key={achievement.id}><Icon size={22} strokeWidth={1.5} aria-hidden="true" /><strong>{achievement.recognition || achievement.event_name || fallback.achievement}</strong><h3>{achievement.title}</h3><p>{achievement.description}</p>{evidence && <ExternalLink href={evidence} className="text-link">{actions.viewDetails}</ExternalLink>}</article>;
         })}{site.nextChapter.show && <article className="win win-next"><Code2 size={22} strokeWidth={1.5} aria-hidden="true" /><strong>{site.nextChapter.label}</strong><h3>{site.nextChapter.title}</h3>{site.nextChapter.text && <p>{site.nextChapter.text}</p>}</article>}</div>
       </Section>
 
-      <section id="contact" className="sec contact" data-reveal><div className="wrap contact-grid">
+      <section id="contact" tabIndex={-1} className="sec contact" data-reveal><div className="wrap contact-grid">
         <div>
           <header className="sec-head"><span className="sec-trace" aria-hidden="true" /><h2>{sections.contact.title}</h2></header>
           {sections.contact.intro && <p className="contact-intro">{sections.contact.intro}</p>}
-          <div className="contact-email-row"><a className="contact-email" href={`mailto:${profile.email}`}>{profile.email}</a><button type="button" className="icon-btn" onClick={() => copyEmail(setEmailCopied)} aria-label={emailCopied ? "Email address copied" : "Copy email address"}>{emailCopied ? <Check size={17} /> : <Copy size={17} />}</button></div>
-          {(linkedin || github) && <div className="contact-links">{linkedin && <ExternalLink href={linkedin} magnetic><Linkedin size={18} />LinkedIn</ExternalLink>}{github && <ExternalLink href={github} magnetic><Github size={18} />GitHub</ExternalLink>}</div>}
+          <div className="contact-email-row"><a className="contact-email" href={`mailto:${profile.email}`}>{profile.email}</a><button type="button" className="icon-btn" onClick={() => copyEmail(setEmailCopied)} aria-label={emailCopied ? form.emailCopied : form.copyEmail}>{emailCopied ? <Check size={17} /> : <Copy size={17} />}</button></div>
+          {(linkedin || github) && <div className="contact-links">{linkedin && <ExternalLink href={linkedin} magnetic><Linkedin size={18} />{actions.linkedin}</ExternalLink>}{github && <ExternalLink href={github} magnetic><Github size={18} />{actions.github}</ExternalLink>}</div>}
           {site.contact.note && <p className="contact-note"><Mail size={16} aria-hidden="true" />{site.contact.note}</p>}
         </div>
         <form className="form" onSubmit={prepareEmail}>
           <div className="form-row">
-            <div className="field"><label htmlFor="name">Your name</label><input id="name" name="name" placeholder="Full name" required maxLength={100} autoComplete="name" /></div>
-            <div className="field"><label htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="you@company.com" required maxLength={254} autoComplete="email" /></div>
+            <div className="field"><label htmlFor="name">{form.nameLabel}</label><input id="name" name="name" placeholder={form.namePlaceholder} required maxLength={100} autoComplete="name" /></div>
+            <div className="field"><label htmlFor="email">{form.emailLabel}</label><input id="email" name="email" type="email" placeholder={form.emailPlaceholder} required maxLength={254} autoComplete="email" /></div>
           </div>
-          <div className="field"><label htmlFor="subject">Subject</label><input id="subject" name="subject" placeholder="What would you like to discuss?" maxLength={150} /></div>
-          <div className="field"><label htmlFor="message">Message</label><textarea id="message" name="message" placeholder="Tell me a little about your opportunity or idea…" required minLength={10} maxLength={4000} rows={5} /></div>
-          <button type="submit" className="btn btn-solid" data-magnetic><Send size={17} />Prepare email</button>
-          <p className="form-help">Opens your email app with a draft. Send your message there.</p>
-          {emailDraft && <div className="draft" role="status"><Check size={18} aria-hidden="true" /><div><p>Your email draft is ready. No message has been sent by this website.</p><a href={emailDraft} className="text-link">Open email draft again</a><button type="button" className="link-btn" onClick={() => copyEmail(setCopied)}>{copied ? "Email address copied" : "Copy email address"}</button></div></div>}
+          <div className="field"><label htmlFor="subject">{form.subjectLabel}</label><input id="subject" name="subject" placeholder={form.subjectPlaceholder} maxLength={150} /></div>
+          <div className="field"><label htmlFor="message">{form.messageLabel}</label><textarea id="message" name="message" placeholder={form.messagePlaceholder} required minLength={10} maxLength={4000} rows={5} /></div>
+          <button type="submit" className="btn btn-solid" data-magnetic><Send size={17} />{form.submit}</button>
+          <p className="form-help">{form.help}</p>
+          {emailDraft && <div className="draft" role="status"><Check size={18} aria-hidden="true" /><div><p>{form.draftReady}</p><a href={emailDraft} className="text-link">{form.openDraft}</a><button type="button" className="link-btn" onClick={() => copyEmail(setCopied)}>{copied ? form.emailCopied : form.copyEmail}</button></div></div>}
         </form>
       </div></section>
     </main>

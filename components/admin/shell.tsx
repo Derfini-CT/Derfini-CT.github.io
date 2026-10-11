@@ -2,14 +2,14 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { Award, BookOpen, BriefcaseBusiness, Code2, FileText, LayoutDashboard, LogOut, Trophy } from "lucide-react";
+import { Award, BookOpen, BriefcaseBusiness, Code2, FileText, FolderTree, LayoutDashboard, LogOut, Trophy } from "lucide-react";
 import { useSupabase } from "@/components/supabase-provider";
 import { useAdminIdentity } from "./auth-gate";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-const menu = [{ label: "Dashboard", path: "", icon: LayoutDashboard }, { label: "Site content", path: "/site", icon: FileText }, { label: "Skills", path: "/skills", icon: BookOpen }, { label: "Projects", path: "/projects", icon: Code2 }, { label: "Certifications", path: "/certifications", icon: Award }, { label: "Experience", path: "/experience", icon: BriefcaseBusiness }, { label: "Achievements", path: "/achievements", icon: Trophy }];
+const menu = [{ label: "Dashboard", path: "", icon: LayoutDashboard }, { label: "Site content & photo", path: "/site", icon: FileText }, { label: "Skill categories", path: "/categories", icon: FolderTree }, { label: "Skills", path: "/skills", icon: BookOpen }, { label: "Projects", path: "/projects", icon: Code2 }, { label: "Certifications", path: "/certifications", icon: Award }, { label: "Experience", path: "/experience", icon: BriefcaseBusiness }, { label: "Achievements", path: "/achievements", icon: Trophy }];
 
 export default function AdminShell({ children }: { children: ReactNode }) {
   const supabase = useSupabase(); const admin = useAdminIdentity(); const pathname = usePathname()?.replace(/\/$/, ""); const [loggingOut, setLoggingOut] = useState(false);

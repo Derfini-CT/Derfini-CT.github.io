@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { projectStatuses, skillCategories, statusLabels, type Achievement, type Certification, type Experience, type Project, type Skill } from "@/lib/portfolio/types";
-import { achievementInputSchema, certificationInputSchema, experienceInputSchema, projectInputSchema, skillInputSchema, validateProjectImage } from "@/lib/portfolio/validation";
+import { projectStatuses, statusLabels, type Achievement, type Certification, type Experience, type Project, type Skill, type SkillCategoryRecord } from "@/lib/portfolio/types";
+import { achievementInputSchema, categoryKeyFromTitle, certificationInputSchema, experienceInputSchema, projectInputSchema, skillCategoryInputSchema, skillInputSchema, validateProjectImage, type SkillCategoryInput } from "@/lib/portfolio/validation";
 import type { z } from "zod";
 export type SkillInput = z.infer<typeof skillInputSchema>;
 export type ProjectInput = z.infer<typeof projectInputSchema>;
@@ -23,11 +24,11 @@ type FieldOptions = { required?: boolean; type?: string; maxLength?: number; mul
 const list = (value: string) => value.split(/[,\n]/).map(item => item.trim()).filter(Boolean);
 const orNull = (value: string) => value.trim() || null;
 
-export default function ContentEditor({ section, item, busy, onSave, onCancel }: { section: ContentSection; item: ContentRow | null; busy: boolean; onSave: (values: ContentInput, file: File | null) => Promise<void>; onCancel: () => void }) {
+export default function ContentEditor({ section, item, busy, categories = [], onCreateCategory, onSave, onCancel }: { section: ContentSection; item: ContentRow | null; busy: boolean; categories?: SkillCategoryRecord[]; onCreateCategory?: (values: SkillCategoryInput) => Promise<SkillCategoryRecord>; onSave: (values: ContentInput, file: File | null) => Promise<void>; onCancel: () => void }) {
   // Every section's columns live in one flat form state; each section reads only its own.
   const row = (item ?? {}) as Partial<Skill & Project & Certification & Experience & Achievement>;
   const [values, setValues] = useState({
-    name: row.name || "", category: row.category || "technical", level: row.level || "",
+    name: row.name || "", category: row.category || categories.find(category => category.key === "technical")?.key || categories[0]?.key || "", level: row.level || "",
     title: row.title || "", short_description: row.short_description || "", full_description: row.full_description || "",
     technologies: row.technologies?.join(", ") || "", github_url: row.github_url || "", demo_url: row.demo_url || "", image_path: row.image_path || "", status: row.status || "draft",
     issuer: row.issuer || "", description: row.description || "", credential_url: row.credential_url || "", issued_on: row.issued_on || "", score: row.score === null || row.score === undefined ? "" : String(row.score), recognition: row.recognition || "",
@@ -37,6 +38,8 @@ export default function ContentEditor({ section, item, busy, onSave, onCancel }:
   });
   const project = section === "projects" && item ? item as Project : null;
   const [file, setFile] = useState<File | null>(null); const [imagePreview, setImagePreview] = useState(""); const [error, setError] = useState(""); const [replacement, setReplacement] = useState<ContentInput | null>(null);
+  const [categoryOpen, setCategoryOpen] = useState(false); const [categoryBusy, setCategoryBusy] = useState(false);
+  const [categoryDraft, setCategoryDraft] = useState({ title: "", description: "", display_order: String(categories.length) });
   useEffect(() => () => { if (imagePreview) URL.revokeObjectURL(imagePreview); }, [imagePreview]);
   const update = (name: keyof typeof values, value: string) => { setValues(current => ({ ...current, [name]: value })); setError(""); };
 
@@ -55,7 +58,16 @@ export default function ContentEditor({ section, item, busy, onSave, onCancel }:
     if (!result.success) { setError(result.error.issues[0]?.message || "Check the fields and try again."); return null; }
     return result.data as ContentInput;
   }
-  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (busy) return; const data = validate(); if (!data) return; if (file && project?.image_path) { setReplacement(data); return; } await onSave(data, file); }
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (busy || categoryBusy) return; if (categoryOpen) { setError("Save or cancel the new category before saving the skill."); return; } if (section === "skills" && !categories.some(category => category.key === values.category)) { setError("Choose a saved category, or add a category first."); return; } const data = validate(); if (!data) return; if (file && project?.image_path) { setReplacement(data); return; } await onSave(data, file); }
+  async function createCategory() {
+    if (!onCreateCategory || categoryBusy) return;
+    const parsed = skillCategoryInputSchema.safeParse({ ...categoryDraft, key: categoryKeyFromTitle(categoryDraft.title), display_order: Number(categoryDraft.display_order) });
+    if (!parsed.success) { setError(parsed.error.issues[0]?.message || "Check the category details."); return; }
+    setCategoryBusy(true); setError("");
+    try { const saved = await onCreateCategory(parsed.data); update("category", saved.key); setCategoryOpen(false); setCategoryDraft({ title: "", description: "", display_order: String(categories.length + 1) }); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Category could not be saved. Your skill edits are kept."); }
+    finally { setCategoryBusy(false); }
+  }
   function chooseImage(candidate: File | null) { if (!candidate) { setFile(null); setImagePreview(""); return; } try { validateProjectImage(candidate); const preview = URL.createObjectURL(candidate); setFile(candidate); setImagePreview(preview); setError(""); } catch (error) { setFile(null); setImagePreview(""); setError(error instanceof Error ? error.message : "Choose a valid image."); } }
 
   const field = (name: keyof typeof values, label: string, options: FieldOptions = {}) => <div><label htmlFor={`editor-${name}`}>{label}</label>{options.multiline ? <Textarea id={`editor-${name}`} value={values[name]} onChange={event => update(name, event.target.value)} disabled={busy} required={options.required} maxLength={options.maxLength} rows={3} placeholder={options.placeholder} /> : <Input id={`editor-${name}`} value={values[name]} onChange={event => update(name, event.target.value)} disabled={busy} required={options.required} type={options.type || "text"} maxLength={options.maxLength} placeholder={options.placeholder} min={options.type === "number" ? 0 : undefined} max={name === "score" ? 100 : undefined} step={name === "score" ? 0.01 : options.type === "number" ? 1 : undefined} />}{options.help && <p className="admin-editor-help">{options.help}</p>}</div>;
@@ -64,7 +76,8 @@ export default function ContentEditor({ section, item, busy, onSave, onCancel }:
   return <><form onSubmit={submit} className="admin-editor-form admin-modal-form">
     {section === "skills" && <>
       {field("name", "Skill name", { required: true, maxLength: 100 })}
-      <div><label id="category-label" htmlFor="skill-category">Category</label><Select value={values.category} onValueChange={value => update("category", value)} disabled={busy}><SelectTrigger id="skill-category" aria-labelledby="category-label" className="w-full h-10"><SelectValue /></SelectTrigger><SelectContent>{skillCategories.map(category => <SelectItem key={category.key} value={category.key}>{category.title}</SelectItem>)}</SelectContent></Select><p className="admin-editor-help">Group headings and descriptions are edited under Site content.</p></div>
+      <div><label id="category-label" htmlFor="skill-category">Category</label><Select value={values.category} onValueChange={value => update("category", value)} disabled={busy || categoryBusy}><SelectTrigger id="skill-category" aria-labelledby="category-label" className="w-full h-10"><SelectValue placeholder="Choose a category" /></SelectTrigger><SelectContent>{categories.map(category => <SelectItem key={category.key} value={category.key}>{category.title}</SelectItem>)}</SelectContent></Select><p className="admin-editor-help">Edit names, descriptions, and order in <Link href="/admin/dashboard/categories/">Skill categories</Link>.</p>{onCreateCategory && !categoryOpen && <Button type="button" variant="outline" onClick={() => { setCategoryOpen(true); setError(""); }} disabled={busy}>Add category</Button>}</div>
+      {categoryOpen && <fieldset className="admin-editor-form rounded-lg border p-4" disabled={busy || categoryBusy}><legend className="px-2 font-medium">New category</legend><div><label htmlFor="new-category-title">Category name</label><Input id="new-category-title" value={categoryDraft.title} onChange={event => setCategoryDraft(current => ({ ...current, title: event.target.value }))} maxLength={100} placeholder="For example, VLSI design" /></div><div><label htmlFor="new-category-description">Category description (optional)</label><Textarea id="new-category-description" value={categoryDraft.description} onChange={event => setCategoryDraft(current => ({ ...current, description: event.target.value }))} maxLength={400} /></div><div><label htmlFor="new-category-order">Category display order</label><Input id="new-category-order" type="number" min={0} step={1} value={categoryDraft.display_order} onChange={event => setCategoryDraft(current => ({ ...current, display_order: event.target.value }))} /></div><p className="admin-editor-help">Saving creates the category immediately and selects it for this skill.</p><div className="admin-row-actions"><Button type="button" variant="outline" onClick={() => { setCategoryOpen(false); setError(""); }}>Cancel category</Button><Button type="button" onClick={() => void createCategory()}>{categoryBusy && <Loader2 className="animate-spin" />}Save category</Button></div></fieldset>}
       {field("level", "Skill level (optional)", { maxLength: 100, placeholder: "For example, Intermediate" })}
       {order}
       <p className="admin-editor-help">Skill levels are stored for future use; the public design shows skill names.</p>
@@ -103,7 +116,7 @@ export default function ContentEditor({ section, item, busy, onSave, onCancel }:
       {field("evidence_url", "Details link", { type: "url", maxLength: 2048, help: "Adds a View details link when set." })}
     </>}
     {error && <p className="admin-error admin-modal-error" role="alert">{error}</p>}
-    <DialogFooter><Button type="button" variant="outline" onClick={onCancel} disabled={busy}>Cancel</Button><Button type="submit" disabled={busy}>{busy && <Loader2 className="animate-spin" />}Save</Button></DialogFooter>
+    <DialogFooter><Button type="button" variant="outline" onClick={onCancel} disabled={busy || categoryBusy}>Cancel</Button><Button type="submit" disabled={busy || categoryBusy}>{busy && <Loader2 className="animate-spin" />}Save</Button></DialogFooter>
   </form>
   <AlertDialog open={replacement !== null} onOpenChange={open => { if (!open && !busy) setReplacement(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Replace the current project image?</AlertDialogTitle><AlertDialogDescription>Saving will upload the new image, update the project, and delete its previous image from Storage. Cancel keeps your edits open without saving.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel><AlertDialogAction onClick={event => { event.preventDefault(); const pending = replacement; setReplacement(null); if (pending) void onSave(pending, file); }}>Save and replace</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
   </>;

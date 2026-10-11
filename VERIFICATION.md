@@ -1,35 +1,28 @@
-# GitHub Pages preparation verification
+# Portfolio management update verification
 
-Verified on October 6, 2026 with Node.js 24.19.0 and Next.js 16.3.8.
+Verified locally and against the configured Supabase project on October 11, 2026.
 
-- `npm install` completed successfully with the final dependency configuration.
-- A clean `npm ci` completed successfully with the included lockfile.
-- `npm run build` completed, including TypeScript validation and the static artifact checker. The export contains the homepage, login, dashboard, and all five dashboard section directory indexes.
-- The final build with the configured public Supabase values also passed. All eight route HTML files exist, and both generated stylesheet hashes match the prior build.
-- `npm run lint` completed without errors or warnings.
-- 43 checks passed against the final static export: eight HTML routes, 14 linked JavaScript/CSS assets, required portfolio content, resume/favicon, unknown-route 404, workflow configuration, unchanged public CSS/RLS SQL, and eight environment validation cases.
-- Desktop and 390px mobile browser previews showed the preserved public design without horizontal overflow. Loading `/admin/dashboard/skills/` directly in the browser redirected to `/admin/` before displaying admin controls. These browser checks used an unconfigured local export, not a live Supabase session.
-- `app/globals.css`, `public/Derfini_Resume.pdf`, and `supabase/schema.sql` match the previous portfolio source byte for byte. Content bindings were changed to browser fetches while retaining the public card markup, labels, and styles.
-- Git ignore checks exclude private environment files, dependencies, `out/`, `.next`, and local tool state. Only the empty `.env.example` is included in the source archive.
+## Source and build
 
-Production dependency audit: `npm audit --omit=dev` reported zero vulnerabilities. The full development audit still reports five linked alerts for the upstream `braces` issue through Next.js ESLint tooling; the current published `braces` version is 3.0.3. Compatible dependency patches were applied, including the local preview server's compression dependency. The matched Next.js 16 lint configuration was retained rather than applying npm's suggested breaking downgrade. GitHub Pages runs no Node.js server from these development tools.
+- Started from the owner's latest `main`, commit `44fe903`, including the green/gold circuit-board design and education timeline animations.
+- Kept the public palette, fonts, section/card layout, resume, and existing content. Added an optional About portrait and Balanced/Original large name-size setting.
+- `npm install`, 19 unit tests, lint, TypeScript and the static production build passed. Lint has two advisory warnings for the existing external font stylesheet and the unoptimized admin image preview.
+- Static checks validate ten HTML routes, including `/admin/`, `/admin/dashboard/`, all five content editors, `/admin/dashboard/site/` and `/admin/dashboard/categories/`. No request-time Node.js features or common privileged key patterns were found.
+- The ignored `.env.local` and GitHub Actions repository Variables contain only the project URL and public API key. Private credentials and generated build folders are excluded from Git.
 
-The checkout preserves the existing repository's history at old-site commit `f746afc` and replaces the old root `index.html`/`style.css` with the Next.js source. The previous site is backed up on remote branch `backup-before-nextjs-pages-2026-10-06`. Source preparation and backend verification do not themselves confirm a hosted replacement.
+## Database and access checks
 
-Hosted Supabase checks completed on October 6, 2026:
+- Applied `supabase/portfolio-management.sql` through the project owner's SQL Editor. It creates the missing page-content singleton and category table, preserves saved content, replaces the fixed skill-category list with a foreign key, and supports admin profile-image paths.
+- 47 independent PostgreSQL integration checks passed: data/ID/timestamp preservation, fresh installation, idempotence, custom groups, rename cascading, used-category deletion protection, admin/non-admin/anonymous roles, revocation, stale-save protection, and Storage policies.
+- Hosted anonymous reads confirmed 19 skills (including VLSI), one project, one certification, two experiences, two achievements, four categories and one page-content row.
+- Fourteen hosted anonymous access/write probes were rejected. All public content tables remained unchanged after those probes.
+- The existing allowlisted admin account, Auth URLs and public 5 MiB JPEG/PNG/WebP bucket are reused. No password, database secret or service-role key was required.
 
-- Schema and seed applied. Anonymous Data API reads returned 19 skills, 1 project, 1 certification, 2 experiences, and 2 achievements; VLSI was present.
-- `security-smoke.sql` passed against the hosted database and its fixtures rolled back. Anonymous API insert/update/delete and admin-membership access were denied.
-- Hosted catalog audit confirmed RLS on all six tables, 22 public database policies, four image policies, five timestamp triggers, no anonymous write privileges, and no remaining test Auth users.
-- Public `project-images` Storage bucket exists with a 5,242,880-byte limit, JPEG/PNG/WebP MIME restrictions, and four admin policies. Real image uploads have not yet been tested.
-- Production Auth Site URL and admin redirect URL are saved. Both public environment values are configured in ignored `.env.local` and GitHub repository Actions Variables; privileged credentials are not included in source.
-- Public Auth settings confirm signup is disabled, email login is enabled, anonymous sign-ins are disabled, and email confirmation remains required.
+## Browser checks before publishing this update
 
-GitHub Pages checks completed on October 6, 2026:
+- Local production previews at 390px and 768px showed the existing green/gold theme and no horizontal overflow.
+- Fixed a mobile-menu focus/scroll interaction. Selecting Skills now closes the menu, focuses the section, scrolls beneath the sticky header, and updates the active section.
+- The local public page produced no console warnings or errors during these checks.
+- Optional profile photo starts hidden with no invented portrait. A real photo must be selected by its owner in Site content before it can appear.
 
-- The initial Actions build and deployment succeeded for commit `de92647`; Pages uses GitHub Actions with HTTPS enforced at `https://derfini-ct.github.io/`.
-- All eight production routes, 20 exported JavaScript chunks, both CSS files, the resume, and the favicon returned HTTP 200. Both CSS files matched the local export byte-for-byte. GitHub and VLSI are present.
-- Browser visits to the dashboard, Skills, and Projects routes while signed out redirected to `/admin/`; the configured login form was available.
-- Live checks identified repeated Auth client creation during React render retries. The client cache fix retains separate authenticated and anonymous clients; lint, build, export checks, 100-call SDK reuse/session isolation checks, and unchanged stylesheet hashes passed. Verify browser console results and the latest Actions run after deploying changes.
-
-Administrator account creation, real password login, dashboard CRUD, and image upload checks remain pending. The deployment workflow refuses absent/invalid public configuration or a privileged key. Follow `GITHUB_PAGES_DEPLOYMENT.md` and `SUPABASE_SETUP.md` for administration and remaining end-to-end checks.
+The included workflow deploys the static `out/` directory to the existing GitHub Pages URL when `main` is pushed. Check the corresponding Actions run for the publication result. Database integration checks prove authorization and data behavior; they do not by themselves prove a browser login or a real Storage upload. Live UI verification should use the authenticated admin session after the new build is published.

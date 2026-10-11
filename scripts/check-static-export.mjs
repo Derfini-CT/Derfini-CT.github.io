@@ -108,7 +108,7 @@ const requiredRoutes = [
   "index.html",
   "admin/index.html",
   "admin/dashboard/index.html",
-  ...["skills", "projects", "certifications", "experience", "achievements"].map(section => `admin/dashboard/${section}/index.html`),
+  ...["site", "categories", "skills", "projects", "certifications", "experience", "achievements"].map(section => `admin/dashboard/${section}/index.html`),
 ];
 for (const route of requiredRoutes) {
   const file = path.join(out, ...route.split("/"));
