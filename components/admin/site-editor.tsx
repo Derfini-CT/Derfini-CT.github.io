@@ -158,7 +158,7 @@ export default function SiteEditor() {
 
     <Group id="hero" title="Hero" hint="The first screen of the portfolio.">
       <Field id="hero-kicker" label="Small line above your name" value={site.hero.kicker} onChange={hero("kicker")} maxLength={80} disabled={disabled} />
-      <Field id="hero-title" label="Headline under your name" value={site.hero.title} onChange={hero("title")} maxLength={160} disabled={disabled} />
+      <Field id="hero-headline" label="Headline under your name" value={site.hero.title} onChange={hero("title")} maxLength={160} disabled={disabled} />
       <Field id="hero-intro" label="Introduction" value={site.hero.intro} onChange={hero("intro")} maxLength={600} multiline disabled={disabled} />
       <Field id="scope-left" label="Oscilloscope caption, left" value={site.hero.scopeLeft} onChange={hero("scopeLeft")} maxLength={80} disabled={disabled} />
       <Field id="scope-right" label="Oscilloscope caption, right" value={site.hero.scopeRight} onChange={hero("scopeRight")} maxLength={80} disabled={disabled} />
