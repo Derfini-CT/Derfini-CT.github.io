@@ -73,70 +73,230 @@ export const siteContentSchema = z.object({
 export type SiteContent = z.infer<typeof siteContentSchema>;
 
 export const defaultSiteContent: SiteContent = {
-  profile: {
-    firstName: "Derfini", lastName: "C T", email: "ctderfini@gmail.com",
-    linkedin: "https://www.linkedin.com/in/derfini-c-t/", github: "https://github.com/Derfini-CT",
-    resumeUrl: "/Derfini_Resume.pdf", location: "Coimbatore", studyLine: "B.E. ECE, 3rd year",
-    photoPath: "", photoAlt: "", showPhoto: false,
+  "hero": {
+    "intro": "Building practical skills in embedded systems, programming, and data analytics, while exploring VLSI, digital design, and semiconductor technology.",
+    "title": "Electronics and Communication Engineering Student",
+    "kicker": "Engineering portfolio",
+    "nameSize": "balanced",
+    "scopeLeft": "Curiosity. Connected to possibility.",
+    "scopeRight": "Learn. Build. Refine."
   },
-  hero: {
-    kicker: "Engineering portfolio",
-    title: "Electronics and Communication Engineering Student",
-    intro: "Exploring the connection between hardware and data. Building practical experience in embedded systems, electronics, and analytics.",
-    scopeLeft: "Curiosity. Connected to possibility.", scopeRight: "Learn. Build. Refine.",
-    nameSize: "balanced",
+  "about": {
+    "body": "My interests span embedded systems, electronics, communication systems, and semiconductor technology. Through internships at Codtech IT Solutions and Feather Softwares, I have developed Arduino projects, worked with sensor data, and built interactive dashboards. I use Python and Java in my programming work and am currently learning VLSI and digital design fundamentals as part of my academic curriculum.",
+    "lead": "I’m pursuing a B.E. in Electronics and Communication Engineering at V.S.B. College of Engineering Technical Campus, Coimbatore, with a CGPA of 9.45/10.",
+    "note": "Open to internship opportunities and technical projects where I can learn, contribute, and apply engineering concepts to practical problems."
   },
-  highlights: [
-    { value: "9.45", unit: "/10", label: "Academic CGPA" },
-    { value: "02", unit: "", label: "Industry internships" },
-    { value: "Power BI", unit: "", label: "Solar PV analysis project" },
-    { value: "NPTEL Elite", unit: "", label: "Adaptive signal processing" },
+  "footer": {
+    "tagline": "Electronics. Communication. Possibility."
+  },
+  "labels": {
+    "nav": {
+      "about": "About",
+      "skills": "Skills",
+      "contact": "Contact",
+      "projects": "Projects",
+      "education": "Education",
+      "experience": "Experience",
+      "achievements": "Achievements",
+      "certifications": "Certifications"
+    },
+    "form": {
+      "from": "From",
+      "help": "Opens your email app with a draft. Send your message there.",
+      "submit": "Prepare email",
+      "replyTo": "Reply to",
+      "greeting": "Hello",
+      "copyEmail": "Copy email address",
+      "nameLabel": "Your name",
+      "openDraft": "Open email draft again",
+      "draftReady": "Your email draft is ready. No message has been sent by this website.",
+      "emailLabel": "Email address",
+      "emailCopied": "Email address copied",
+      "messageLabel": "Message",
+      "subjectLabel": "Subject",
+      "defaultSubject": "Portfolio enquiry",
+      "namePlaceholder": "Full name",
+      "emailPlaceholder": "you@company.com",
+      "messagePlaceholder": "Tell me a little about your opportunity or idea…",
+      "subjectPlaceholder": "What would you like to discuss?"
+    },
+    "actions": {
+      "github": "GitHub",
+      "resume": "Resume",
+      "linkedin": "LinkedIn",
+      "liveDemo": "View demo",
+      "contactMe": "Contact me",
+      "repository": "Repository",
+      "viewResume": "View resume",
+      "certificate": "Certificate",
+      "keyFeatures": "Key features",
+      "viewDetails": "View details"
+    },
+    "fallback": {
+      "issuer": "Issuer: to be added",
+      "skills": "Skills will appear here as they are added.",
+      "present": "present",
+      "project": "Project",
+      "projects": "Projects will appear here as they are added.",
+      "completed": "Completed",
+      "experience": "Experience will appear here as it is added.",
+      "achievement": "Achievement",
+      "courseScore": "Course score",
+      "organization": "Organization: to be added",
+      "certifications": "Certifications will appear here as they are added.",
+      "projectDetails": "",
+      "experienceDates": "",
+      "embeddedCategory": "Embedded systems",
+      "analyticsCategory": "Data analytics",
+      "completionDetails": "Completion details: to be added",
+      "mobileDescription": "Explore my engineering portfolio.",
+      "experienceCategory": "Experience"
+    }
+  },
+  "contact": {
+    "note": "Your next idea could start with a hello."
+  },
+  "profile": {
+    "email": "ctderfini@gmail.com",
+    "github": "https://github.com/Derfini-CT",
+    "lastName": "C T",
+    "linkedin": "https://www.linkedin.com/in/derfini-c-t/",
+    "location": "Coimbatore",
+    "photoAlt": "Derfini C T — professional portrait",
+    "firstName": "Derfini",
+    "photoPath": "profile/ad37f621-1de0-4498-9d8e-41e1eaef942a.jpg",
+    "resumeUrl": "/Derfini_Resume.pdf",
+    "showPhoto": true,
+    "studyLine": "B.E. ECE, 3rd year"
+  },
+  "sections": {
+    "about": {
+      "intro": "",
+      "title": "An engineering mindset. A drive to build."
+    },
+    "skills": {
+      "intro": "",
+      "title": "Across hardware, code, and data."
+    },
+    "contact": {
+      "intro": "For engineering opportunities, project discussions, or a professional connection, reach me here.",
+      "title": "Let’s start a conversation."
+    },
+    "projects": {
+      "intro": "Projects spanning embedded systems, Arduino applications, and renewable energy analytics.",
+      "title": "Turning ideas into practice."
+    },
+    "education": {
+      "intro": "",
+      "title": "A strong foundation. Always learning."
+    },
+    "experience": {
+      "intro": "",
+      "title": "Learning through real applications."
+    },
+    "achievements": {
+      "intro": "",
+      "title": "Milestones along the way."
+    },
+    "certifications": {
+      "intro": "",
+      "title": "Taking learning a step further."
+    }
+  },
+  "education": [
+    {
+      "note": "",
+      "unit": "%",
+      "year": "2022",
+      "level": "Secondary",
+      "score": "88.8",
+      "detail": "Marthandam, SSLC (10th standard)",
+      "school": "Christuraja Matric Hr. Sec. School"
+    },
+    {
+      "note": "",
+      "unit": "%",
+      "year": "2024",
+      "level": "Higher secondary",
+      "score": "84.0",
+      "detail": "Marthandam, HSC (12th standard)",
+      "school": "Christuraja Matric Hr. Sec. School"
+    },
+    {
+      "note": "Expected graduation: May 2028 · SGPA: Semester 1 — 8.91; Semester 2 — 9.23; Semester 3 — 9.88; Semester 4 — 9.82.",
+      "unit": "/10 CGPA",
+      "year": "2024–2028",
+      "level": "Undergraduate, 3rd year",
+      "score": "9.45",
+      "detail": "V.S.B. College of Engineering Technical Campus, Coimbatore",
+      "school": "B.E. Electronics and Communication Engineering"
+    }
   ],
-  interests: [
-    { title: "Embedded systems", text: "Real-time concepts & sensor data" },
-    { title: "Electronics & communication", text: "Systems, signals & technology" },
-    { title: "Data analytics", text: "From metrics to meaningful insights" },
+  "interests": [
+    {
+      "text": "Real-time concepts & sensor data",
+      "title": "Embedded systems"
+    },
+    {
+      "text": "Systems, signals & technology",
+      "title": "Electronics & communication"
+    },
+    {
+      "text": "From metrics to meaningful insights",
+      "title": "Data analytics"
+    }
   ],
-  about: {
-    lead: "I’m pursuing a B.E. in Electronics and Communication Engineering at V.S.B. College of Engineering Technical Campus, Coimbatore, with a CGPA of 9.45/10.",
-    body: "My interests span electronics, communication systems, embedded technology, and project development. Through internships in embedded systems and data analytics, I’ve worked with sensor data, real-time system concepts, and interactive dashboards that make information easier to understand.",
-    note: "Interested in reliable embedded systems, hardware security, and technology that solves practical problems.",
-  },
-  education: [
-    { year: "2022", level: "Secondary", school: "Christuraja Matric Hr. Sec. School", detail: "Marthandam, SSLC (10th standard)", score: "88.8", unit: "%", note: "" },
-    { year: "2024", level: "Higher secondary", school: "Christuraja Matric Hr. Sec. School", detail: "Marthandam, HSC (12th standard)", score: "84.0", unit: "%", note: "" },
-    { year: "Now", level: "Undergraduate, 3rd year", school: "B.E. Electronics and Communication Engineering", detail: "V.S.B. College of Engineering Technical Campus, Coimbatore", score: "9.45", unit: "/10 CGPA", note: "Expected graduation: to be added" },
+  "highlights": [
+    {
+      "unit": "/10",
+      "label": "Academic CGPA",
+      "value": "9.45"
+    },
+    {
+      "unit": "",
+      "label": "Industry internships",
+      "value": "02"
+    },
+    {
+      "unit": "",
+      "label": "Solar PV analysis project",
+      "value": "Power BI"
+    },
+    {
+      "unit": "",
+      "label": "Adaptive signal processing",
+      "value": "NPTEL Elite"
+    }
   ],
-  skillGroups: {
-    programming: { title: "Programming", description: "Languages and core programming concepts." },
-    technical: { title: "Embedded & technical", description: "Practical experience through embedded systems work." },
-    data: { title: "Data & visualization", description: "Analysis and dashboards for meaningful reporting." },
-    tools: { title: "Software & tools", description: "Tools used for development, analysis, and productivity." },
+  "softSkills": {
+    "note": "",
+    "text": "Problem-solving through regular coding practice; teamwork and creative thinking through hackathon participation; and communication through stakeholder-focused dashboard reporting.",
+    "title": "Communication & soft skills"
   },
-  softSkills: {
-    title: "Communication & soft skills",
-    text: "Experience presenting KPIs and business performance through stakeholder-facing data visualization.",
-    note: "Additional verified soft skills and examples: to be added.",
+  "nextChapter": {
+    "show": false,
+    "text": "Participation details, competitions, and additional academic achievements: to be added.",
+    "label": "Next chapter",
+    "title": "Hackathons & competitions"
   },
-  nextChapter: { show: true, label: "Next chapter", title: "Hackathons & competitions", text: "Participation details, competitions, and additional academic achievements: to be added." },
-  sections: {
-    about: { title: "An engineering mindset. A drive to build.", intro: "" },
-    education: { title: "A strong foundation. Always learning.", intro: "" },
-    skills: { title: "Across hardware, code, and data.", intro: "" },
-    projects: { title: "Turning ideas into practice.", intro: "A project at the intersection of renewable energy and data analysis." },
-    experience: { title: "Learning through real applications.", intro: "" },
-    certifications: { title: "Taking learning a step further.", intro: "" },
-    achievements: { title: "Milestones along the way.", intro: "" },
-    contact: { title: "Let’s start a conversation.", intro: "For engineering opportunities, project discussions, or a professional connection, reach me here." },
-  },
-  contact: { note: "Your next idea could start with a hello." },
-  footer: { tagline: "Electronics. Communication. Possibility." },
-  labels: {
-    nav: { about: "About", education: "Education", skills: "Skills", projects: "Projects", experience: "Experience", certifications: "Certifications", achievements: "Achievements", contact: "Contact" },
-    actions: { resume: "Resume", viewResume: "View resume", linkedin: "LinkedIn", github: "GitHub", contactMe: "Contact me", repository: "Repository", liveDemo: "Live demo", keyFeatures: "Key features", certificate: "Certificate", viewDetails: "View details" },
-    form: { nameLabel: "Your name", namePlaceholder: "Full name", emailLabel: "Email address", emailPlaceholder: "you@company.com", subjectLabel: "Subject", subjectPlaceholder: "What would you like to discuss?", messageLabel: "Message", messagePlaceholder: "Tell me a little about your opportunity or idea…", submit: "Prepare email", help: "Opens your email app with a draft. Send your message there.", draftReady: "Your email draft is ready. No message has been sent by this website.", openDraft: "Open email draft again", copyEmail: "Copy email address", emailCopied: "Email address copied", defaultSubject: "Portfolio enquiry", greeting: "Hello", from: "From", replyTo: "Reply to" },
-    fallback: { skills: "Skills will appear here as they are added.", projects: "Projects will appear here as they are added.", experience: "Experience will appear here as it is added.", certifications: "Certifications will appear here as they are added.", project: "Project", projectDetails: "Detailed features, dataset, and outcomes: to be added.", organization: "Organization: to be added", experienceDates: "Internship dates: to be added", present: "present", experienceCategory: "Experience", embeddedCategory: "Embedded systems", analyticsCategory: "Data analytics", issuer: "Issuer: to be added", completionDetails: "Completion details: to be added", completed: "Completed", courseScore: "Course score", achievement: "Achievement", mobileDescription: "Explore my engineering portfolio." },
-  },
+  "skillGroups": {
+    "data": {
+      "title": "Data & visualization",
+      "description": "Analysis and dashboards for meaningful reporting."
+    },
+    "tools": {
+      "title": "Software & tools",
+      "description": "Tools used for development, analysis, and productivity."
+    },
+    "technical": {
+      "title": "Embedded & technical",
+      "description": "Practical experience through embedded systems work."
+    },
+    "programming": {
+      "title": "Programming",
+      "description": "Languages and core programming concepts."
+    }
+  }
 };
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);

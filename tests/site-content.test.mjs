@@ -27,7 +27,7 @@ test("a saved list replaces the whole default list, and items gain fields added 
 test("a field of the wrong type falls back instead of breaking the page", () => {
   const site = resolveSiteContent({ profile: { firstName: 42 }, nextChapter: { show: "yes" } });
   assert.equal(site.profile.firstName, "Derfini");
-  assert.equal(site.nextChapter.show, true);
+  assert.equal(site.nextChapter.show, defaultSiteContent.nextChapter.show);
 });
 
 test("an invalid fixed-length list falls back without discarding other saved content", () => {
@@ -50,11 +50,11 @@ test("an invalid saved field cannot reset a valid biography or education score",
   assert.equal(site.education[0].score, "9.61");
 });
 
-test("older saved content gains photo, typography and interface fields without inventing a photo", () => {
+test("older saved content gains reviewed photo, typography and interface defaults", () => {
   const site = resolveSiteContent({ profile: { firstName: "Saved name" }, labels: { nav: { about: "Profile" } } });
   assert.equal(site.profile.firstName, "Saved name");
-  assert.equal(site.profile.photoPath, "");
-  assert.equal(site.profile.showPhoto, false);
+  assert.equal(site.profile.photoPath, defaultSiteContent.profile.photoPath);
+  assert.equal(site.profile.showPhoto, defaultSiteContent.profile.showPhoto);
   assert.equal(site.hero.nameSize, "balanced");
   assert.equal(site.labels.nav.about, "Profile");
   assert.equal(site.labels.form.submit, "Prepare email");

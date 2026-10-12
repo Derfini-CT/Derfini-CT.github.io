@@ -6,44 +6,8 @@
       "category": "programming",
       "level": null,
       "display_order": 0,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000002",
-      "name": "Python",
-      "category": "programming",
-      "level": null,
-      "display_order": 1,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000003",
-      "name": "C",
-      "category": "programming",
-      "level": null,
-      "display_order": 2,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000004",
-      "name": "SQL",
-      "category": "programming",
-      "level": null,
-      "display_order": 3,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000005",
-      "name": "Data structures",
-      "category": "programming",
-      "level": null,
-      "display_order": 4,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
     },
     {
       "id": "10000000-0000-4000-8000-000000000006",
@@ -51,53 +15,8 @@
       "category": "technical",
       "level": null,
       "display_order": 0,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000007",
-      "name": "Sensor data acquisition",
-      "category": "technical",
-      "level": null,
-      "display_order": 1,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000008",
-      "name": "Sensor data processing",
-      "category": "technical",
-      "level": null,
-      "display_order": 2,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000009",
-      "name": "IoT communication protocols",
-      "category": "technical",
-      "level": null,
-      "display_order": 3,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000010",
-      "name": "Hardware security",
-      "category": "technical",
-      "level": null,
-      "display_order": 4,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000019",
-      "name": "VLSI",
-      "category": "technical",
-      "level": null,
-      "display_order": 5,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
     },
     {
       "id": "10000000-0000-4000-8000-000000000011",
@@ -105,35 +24,8 @@
       "category": "data",
       "level": null,
       "display_order": 0,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000012",
-      "name": "Power BI",
-      "category": "data",
-      "level": null,
-      "display_order": 1,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000013",
-      "name": "Tableau",
-      "category": "data",
-      "level": null,
-      "display_order": 2,
-      "created_at": "",
-      "updated_at": ""
-    },
-    {
-      "id": "10000000-0000-4000-8000-000000000014",
-      "name": "KPI reporting",
-      "category": "data",
-      "level": null,
-      "display_order": 3,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
     },
     {
       "id": "10000000-0000-4000-8000-000000000015",
@@ -141,8 +33,35 @@
       "category": "tools",
       "level": null,
       "display_order": 0,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000002",
+      "name": "Python",
+      "category": "programming",
+      "level": null,
+      "display_order": 1,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000007",
+      "name": "Sensor data acquisition",
+      "category": "technical",
+      "level": null,
+      "display_order": 1,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000012",
+      "name": "Power BI",
+      "category": "data",
+      "level": null,
+      "display_order": 1,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
     },
     {
       "id": "10000000-0000-4000-8000-000000000016",
@@ -150,8 +69,35 @@
       "category": "tools",
       "level": null,
       "display_order": 1,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000003",
+      "name": "C",
+      "category": "programming",
+      "level": null,
+      "display_order": 2,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000008",
+      "name": "Sensor data processing",
+      "category": "technical",
+      "level": null,
+      "display_order": 2,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000013",
+      "name": "Tableau",
+      "category": "data",
+      "level": null,
+      "display_order": 2,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
     },
     {
       "id": "10000000-0000-4000-8000-000000000017",
@@ -159,8 +105,35 @@
       "category": "tools",
       "level": null,
       "display_order": 2,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000004",
+      "name": "SQL",
+      "category": "programming",
+      "level": null,
+      "display_order": 3,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000009",
+      "name": "IoT communication protocols",
+      "category": "technical",
+      "level": null,
+      "display_order": 3,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000014",
+      "name": "KPI reporting",
+      "category": "data",
+      "level": null,
+      "display_order": 3,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
     },
     {
       "id": "10000000-0000-4000-8000-000000000018",
@@ -168,103 +141,346 @@
       "category": "tools",
       "level": null,
       "display_order": 3,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000005",
+      "name": "Data structures",
+      "category": "programming",
+      "level": null,
+      "display_order": 4,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000010",
+      "name": "Hardware security",
+      "category": "technical",
+      "level": null,
+      "display_order": 4,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-06T12:13:54.650145+00:00"
+    },
+    {
+      "id": "472fd443-3caa-5be9-95c0-8bc60e8605bb",
+      "name": "DAX",
+      "category": "data",
+      "level": null,
+      "display_order": 4,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000019",
+      "name": "VLSI",
+      "category": "technical",
+      "level": "Currently learning",
+      "display_order": 5,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "d001011e-187a-540a-83a2-3cd653263a77",
+      "name": "Pandas",
+      "category": "data",
+      "level": null,
+      "display_order": 5,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "6320e669-773e-560f-a33e-ad3ef40fd5f7",
+      "name": "Embedded C/C++",
+      "category": "technical",
+      "level": null,
+      "display_order": 6,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "aacb3c90-9dd5-510a-8c0c-7185a065d70e",
+      "name": "Data visualization",
+      "category": "data",
+      "level": null,
+      "display_order": 6,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "887d83cf-2b56-5de8-8502-131a89a2f617",
+      "name": "Arduino",
+      "category": "technical",
+      "level": null,
+      "display_order": 7,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "c495cd3e-06d9-5c95-b2b0-ddae9e43c4f6",
+      "name": "Microcontrollers",
+      "category": "technical",
+      "level": null,
+      "display_order": 8,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "e3eafe07-6c81-53a5-be20-b5bd2360896e",
+      "name": "Sensor interfacing",
+      "category": "technical",
+      "level": null,
+      "display_order": 9,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "93525c7b-1f5f-51fd-a0a3-1e7fb30a5625",
+      "name": "Digital electronics",
+      "category": "technical",
+      "level": null,
+      "display_order": 10,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
     }
   ],
   "projects": [
     {
       "id": "20000000-0000-4000-8000-000000000001",
-      "title": "Solar PV Plant Analysis",
-      "short_description": "A Power BI project focused on the analysis of a solar photovoltaic plant, bringing an engineering subject into a data analytics workflow.",
-      "full_description": "Detailed features, dataset, and outcomes: to be added.",
+      "title": "Solar PV Plant Performance & Efficiency Analytics",
+      "short_description": "An interactive Power BI solution for exploring solar energy generation, weather conditions, and plant performance across 51 photovoltaic plants.",
+      "full_description": "Developed in August 2026.\r\n• Prepared BR-PVGen generation and meteorological data using Python and Pandas.\r\n• Built a star-schema model and DAX measures for energy generation and capacity utilization.\r\n• Created five dashboard pages with plant comparisons, weather analysis, maps, and interactive filters.\r\n• Used Key Influencers and Decomposition Tree visuals to explore factors associated with energy generation.\r\n• Documented the workflow, analysis, and dashboard screenshots in GitHub.",
       "technologies": [
         "Power BI",
-        "Solar photovoltaic systems",
-        "Data analysis"
+        "DAX",
+        "Python",
+        "Pandas",
+        "Excel"
       ],
-      "github_url": null,
-      "demo_url": null,
-      "image_path": null,
-      "status": "unspecified",
+      "github_url": "https://github.com/Derfini-CT/Solar-PV-Plant-Performance-Analytics",
+      "demo_url": "https://github.com/Derfini-CT/Solar-PV-Plant-Performance-Analytics#-dashboard-preview",
+      "image_path": "projects/efd36571-a73b-4c52-ae7d-59f4c40544a5.png",
+      "status": "completed",
       "display_order": 0,
-      "created_at": "",
-      "updated_at": ""
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:50:30.923272+00:00"
+    },
+    {
+      "id": "2f781257-3b0d-5f32-b2f1-0a1651ff5a78",
+      "title": "Home Automation Using Bluetooth",
+      "short_description": "An Arduino-based prototype for controlling an output wirelessly through Bluetooth commands.",
+      "full_description": "Developed during the Codtech embedded systems internship in January 2026.\r\n• Interfaces an Arduino with an HC-05 Bluetooth module.\r\n• Receives commands for switching a connected output on and off.\r\n• Demonstrates serial communication, digital output control, and hardware interfacing.\r\n• Includes source code, a circuit diagram, and a working demonstration in GitHub.",
+      "technologies": [
+        "Arduino",
+        "Embedded C/C++",
+        "HC-05 Bluetooth",
+        "Serial communication"
+      ],
+      "github_url": "https://github.com/Derfini-CT/HOME-AUTOMATION-USING-BLUETOOTH",
+      "demo_url": "https://github.com/Derfini-CT/HOME-AUTOMATION-USING-BLUETOOTH/blob/main/Home%20Automation%20Using%20Bluetooth_Output%20Demonstration.mp4",
+      "image_path": "projects/f7a27707-b6ac-4cc0-a01e-904dc0bc62d0.jpg",
+      "status": "completed",
+      "display_order": 1,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:50:42.704966+00:00"
+    },
+    {
+      "id": "54f2a956-4650-5bfd-bebf-6127d7fb43f8",
+      "title": "Temperature Monitoring System",
+      "short_description": "An Arduino and sensor project that monitors temperature and presents readings on an LCD.",
+      "full_description": "Developed during the Codtech embedded systems internship in January 2026.\r\n• Acquires temperature readings from a sensor.\r\n• Displays readings through an LCD interface.\r\n• Demonstrates sensor acquisition, microcontroller programming, and hardware interfacing.\r\n• Includes source code, a circuit diagram, and an output demonstration in GitHub.",
+      "technologies": [
+        "Arduino",
+        "Embedded C/C++",
+        "Temperature sensor",
+        "LCD"
+      ],
+      "github_url": "https://github.com/Derfini-CT/TEMPERATURE-MONITORING-SYSTEM",
+      "demo_url": "https://github.com/Derfini-CT/TEMPERATURE-MONITORING-SYSTEM/blob/main/Temperature%20Monitoring%20System_Output%20Demonstration.mp4",
+      "image_path": "projects/4bc80e5f-6fa8-4068-8a0b-d7b7eec41c7a.png",
+      "status": "completed",
+      "display_order": 2,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:50:54.255164+00:00"
+    },
+    {
+      "id": "520e2daa-4504-55b5-89b7-6175710ff237",
+      "title": "Push Button Counter",
+      "short_description": "An Arduino digital counter that counts button presses and displays the current count on an LCD.",
+      "full_description": "Developed during the Codtech embedded systems internship in January 2026.\r\n• Reads a push button as a digital input.\r\n• Updates a counter and displays the result on an LCD.\r\n• Demonstrates input handling, counter logic, LCD interfacing, and hardware testing.\r\n• Includes setup and output photos, source code, and a demonstration video in GitHub.",
+      "technologies": [
+        "Arduino",
+        "Embedded C/C++",
+        "Digital inputs",
+        "LCD"
+      ],
+      "github_url": "https://github.com/Derfini-CT/Push-Button-Counter",
+      "demo_url": "https://github.com/Derfini-CT/Push-Button-Counter/blob/main/Output%20Demonstration.mp4",
+      "image_path": "projects/cf2e2249-bbbb-4f9e-9d24-8bb8f2942c1f.jpg",
+      "status": "completed",
+      "display_order": 3,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:53:31.384262+00:00"
+    },
+    {
+      "id": "12a2c77e-46eb-511e-a975-185d446376a6",
+      "title": "Speech Recognition System",
+      "short_description": "An Arduino-based voice-control project that uses recognized commands to switch a connected output.",
+      "full_description": "Developed during the Codtech embedded systems internship in January 2026.\r\n• Uses stored voice commands for output control.\r\n• Demonstrates Arduino programming and command-based embedded applications.\r\n• Includes source code, a circuit diagram, and a working demonstration in GitHub.",
+      "technologies": [
+        "Arduino",
+        "Embedded C/C++",
+        "Voice recognition",
+        "Digital output control"
+      ],
+      "github_url": "https://github.com/Derfini-CT/SPEECH-RECOGNITION-SYSTEM",
+      "demo_url": "https://github.com/Derfini-CT/SPEECH-RECOGNITION-SYSTEM/blob/main/Speech%20Recognition%20System_Working%20Demo.mp4",
+      "image_path": "projects/abf8cd49-f2ab-41b2-9ff0-099a7ade6366.jpg",
+      "status": "completed",
+      "display_order": 4,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:53:46.036102+00:00"
     }
   ],
   "certifications": [
     {
-      "display_order": 0,
-      "created_at": "",
-      "updated_at": "",
       "id": "30000000-0000-4000-8000-000000000001",
       "title": "Introduction to Adaptive Signal Processing",
       "issuer": "NPTEL · IIT Kharagpur",
-      "description": "8-week course · Completion date: to be added",
-      "credential_url": null,
+      "description": "8-week NPTEL course from IIT Kharagpur covering adaptive filtering, signal estimation, and digital signal processing. Issued April 2025; Elite recognition with a score of 65%.",
+      "credential_url": "https://www.linkedin.com/in/derfini-c-t/overlay/Certifications/931679518/treasury/?profileId=ACoAAFv21GgBRz78MI3xqZmpiMZR5raY-O7gllo",
       "issued_on": null,
-      "score": 65,
-      "recognition": "Elite"
+      "score": 65.0,
+      "recognition": "Elite",
+      "display_order": 0,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "8bdccfdc-8910-504c-be24-9a52d5caed73",
+      "title": "Embedded Systems Internship",
+      "issuer": "Codtech IT Solutions Private Limited",
+      "description": "Completed a four-week internship in embedded system design, microcontroller programming, and hardware interfacing. Issued January 2026 · Credential ID: CTIS1249.",
+      "credential_url": "https://www.linkedin.com/in/derfini-c-t/overlay/Certifications/932727621/treasury/?profileId=ACoAAFv21GgBRz78MI3xqZmpiMZR5raY-O7gllo",
+      "issued_on": null,
+      "score": null,
+      "recognition": null,
+      "display_order": 1,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "2e3fd6e3-ca67-5d56-ae79-7e7f54bdaf62",
+      "title": "Data Analytics Internship",
+      "issuer": "Feather Softwares",
+      "description": "Completed practical work in data analysis, preprocessing, visualization, and reporting. Issued June 2026.",
+      "credential_url": "https://www.linkedin.com/in/derfini-c-t/overlay/Certifications/932982924/treasury/?profileId=ACoAAFv21GgBRz78MI3xqZmpiMZR5raY-O7gllo",
+      "issued_on": null,
+      "score": null,
+      "recognition": null,
+      "display_order": 2,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
     }
   ],
   "experiences": [
     {
-      "display_order": 0,
-      "created_at": "",
-      "updated_at": "",
       "id": "40000000-0000-4000-8000-000000000001",
       "title": "Embedded Systems Intern",
       "organization": "Codtech IT Solutions Private Limited",
-      "description": "Programmed real-time embedded systems using FreeRTOS concepts, with sensor data acquisition, processing, and communication protocols for IoT monitoring applications.",
+      "description": "Completed a four-week internship developing Arduino-based Bluetooth home automation, temperature monitoring, push-button counter, and speech recognition projects. Practised microcontroller programming, sensor interfacing, and embedded C/C++, alongside FreeRTOS concepts and sensor data acquisition for IoT monitoring.",
       "technologies": [
+        "Arduino",
+        "Embedded C/C++",
+        "Sensor interfacing",
         "FreeRTOS concepts",
-        "Sensor data",
-        "IoT monitoring"
+        "IoT"
       ],
-      "started_on": null,
-      "ended_on": null
+      "started_on": "2025-12-26",
+      "ended_on": "2026-01-23",
+      "display_order": 0,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
     },
     {
-      "display_order": 1,
-      "created_at": "",
-      "updated_at": "",
       "id": "40000000-0000-4000-8000-000000000002",
       "title": "Data Analytics Intern",
       "organization": "Feather Softwares",
-      "description": "Built and published interactive Power BI and Tableau dashboards to track key performance indicators and communicate business performance to stakeholders.",
+      "description": "Completed a one-month Data Analytics internship in June 2026. Cleaned and transformed real-world sales data, built interactive dashboards for revenue trends, product performance, customer behaviour, and geographical sales distribution, and communicated KPIs through Power BI, Tableau, DAX, and dashboard storytelling.",
       "technologies": [
         "Power BI",
         "Tableau",
-        "KPI dashboards"
+        "DAX",
+        "Data cleaning",
+        "Data visualization"
       ],
       "started_on": null,
-      "ended_on": null
+      "ended_on": null,
+      "display_order": 1,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
     }
   ],
   "achievements": [
     {
-      "display_order": 0,
-      "created_at": "",
-      "updated_at": "",
       "id": "50000000-0000-4000-8000-000000000001",
       "title": "Academic performance",
-      "description": "CGPA in Electronics and Communication Engineering at V.S.B. College of Engineering Technical Campus.",
+      "description": "Maintaining a CGPA of 9.45/10 in Electronics and Communication Engineering. Semester GPAs: 8.91 (S1), 9.23 (S2), 9.88 (S3), and 9.82 (S4).",
       "event_name": null,
       "recognition": "9.45/10",
       "achieved_on": null,
-      "evidence_url": null
+      "evidence_url": "https://www.linkedin.com/in/derfini-c-t/",
+      "display_order": 0,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
     },
     {
-      "display_order": 1,
-      "created_at": "",
-      "updated_at": "",
       "id": "50000000-0000-4000-8000-000000000002",
       "title": "NPTEL distinction",
       "description": "Earned the Elite designation in Introduction to Adaptive Signal Processing from IIT Kharagpur.",
       "event_name": null,
       "recognition": "Elite",
       "achieved_on": null,
-      "evidence_url": null
+      "evidence_url": "https://www.linkedin.com/in/derfini-c-t/overlay/Certifications/931679518/treasury/?profileId=ACoAAFv21GgBRz78MI3xqZmpiMZR5raY-O7gllo",
+      "display_order": 1,
+      "created_at": "2026-10-06T12:13:54.650145+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "13874496-8091-57d6-a8e5-4ef4d5cb9db0",
+      "title": "Adobe Hackathon — Round 1",
+      "description": "Cleared the first round of the Adobe Hackathon and received a participation certificate. The experience involved problem-solving, teamwork, and creative thinking on a real-world challenge.",
+      "event_name": "Adobe Hackathon",
+      "recognition": "Round 1 cleared",
+      "achieved_on": null,
+      "evidence_url": "https://www.linkedin.com/feed/update/urn:li:activity:7500366246752935936/",
+      "display_order": 2,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "58f646d2-48c1-5327-9914-15f1dc6f2624",
+      "title": "LeetCode 50 Days Badge",
+      "description": "Earned the 2026 LeetCode 50 Days Badge through consistent coding practice, strengthening problem-solving and programming skills.",
+      "event_name": "LeetCode",
+      "recognition": "50 Days · 2026",
+      "achieved_on": null,
+      "evidence_url": "https://www.linkedin.com/feed/update/urn:li:activity:7501633649235271681/",
+      "display_order": 3,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
+    },
+    {
+      "id": "9c5d9279-c5fe-5575-9960-6e72356ff797",
+      "title": "LeetCode Daily Coding Challenge",
+      "description": "Completed the August 2026 LeetCode Daily Coding Challenge and earned the DCC badge through regular problem-solving practice.",
+      "event_name": "LeetCode Daily Coding Challenge",
+      "recognition": "August 2026",
+      "achieved_on": null,
+      "evidence_url": "https://www.linkedin.com/feed/update/urn:li:activity:7501632409340215297/",
+      "display_order": 4,
+      "created_at": "2026-10-12T15:49:02.5399+00:00",
+      "updated_at": "2026-10-12T15:49:02.5399+00:00"
     }
   ]
 }

@@ -21,7 +21,19 @@ export function includeSkillCategories(categories: SkillCategoryRecord[], skills
   return result;
 }
 
-export const portfolioSnapshot = { ...snapshot, site: defaultSiteContent, categories: fallbackSkillCategories(defaultSiteContent), profileImageUrl: null, source: "snapshot" } as PortfolioContent;
+// Static fallback images use the same public bucket as the live records. Building
+// their URLs requires no session or network request, so they also survive a DB outage.
+const snapshotConfig = getPublicSupabaseConfig();
+const snapshotImageUrl = (path: string | null) => snapshotConfig && path ? `${snapshotConfig.url}/storage/v1/object/public/${projectImageBucket}/${path.split("/").map(encodeURIComponent).join("/")}` : null;
+
+export const portfolioSnapshot = {
+  ...snapshot,
+  projects: snapshot.projects.map(project => ({ ...project, image_url: snapshotImageUrl(project.image_path) })),
+  site: defaultSiteContent,
+  categories: fallbackSkillCategories(defaultSiteContent),
+  profileImageUrl: defaultSiteContent.profile.showPhoto ? snapshotImageUrl(defaultSiteContent.profile.photoPath) : null,
+  source: "snapshot",
+} as PortfolioContent;
 
 export async function getPortfolioContent(): Promise<PortfolioContent> {
   const config = getPublicSupabaseConfig();
