@@ -97,8 +97,8 @@ export default function ContentManager({ section }: { section: ContentSection })
         await load();
         throw new Error("This record changed elsewhere or your access changed. Your edits are kept; cancel and reopen the latest record before saving.");
       }
-      const oldPath = editing?.item && "image_path" in editing.item ? editing.item.image_path : null;
-      if (oldPath && uploadedPath && oldPath !== uploadedPath) await removeUnreferencedImage(oldPath);
+      // An image edit writes a new UUID; keep the previous file so cropping never
+      // destroys the original. Deleting a project still cleans its current image.
       uploadedPath = null; setEditing(null); toast.success(id ? "Changes saved." : `${config.one[0].toUpperCase()}${config.one.slice(1)} added.`); await load();
     } catch (error) {
       // A network timeout can arrive before the database finishes committing.

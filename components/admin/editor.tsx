@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { projectStatuses, statusLabels, type Achievement, type Certification, type Experience, type Project, type Skill, type SkillCategoryRecord } from "@/lib/portfolio/types";
+import { useSupabase } from "@/components/supabase-provider";
+import ProjectImageEditor from "./project-image-editor";
+import { projectImageBucket, projectStatuses, statusLabels, type Achievement, type Certification, type Experience, type Project, type Skill, type SkillCategoryRecord } from "@/lib/portfolio/types";
 import { achievementInputSchema, categoryKeyFromTitle, certificationInputSchema, experienceInputSchema, projectInputSchema, skillCategoryInputSchema, skillInputSchema, validateProjectImage, type SkillCategoryInput } from "@/lib/portfolio/validation";
 import type { z } from "zod";
 export type SkillInput = z.infer<typeof skillInputSchema>;
@@ -25,6 +27,7 @@ const list = (value: string) => value.split(/[,\n]/).map(item => item.trim()).fi
 const orNull = (value: string) => value.trim() || null;
 
 export default function ContentEditor({ section, item, busy, categories = [], onCreateCategory, onSave, onCancel }: { section: ContentSection; item: ContentRow | null; busy: boolean; categories?: SkillCategoryRecord[]; onCreateCategory?: (values: SkillCategoryInput) => Promise<SkillCategoryRecord>; onSave: (values: ContentInput, file: File | null) => Promise<void>; onCancel: () => void }) {
+  const supabase = useSupabase();
   // Every section's columns live in one flat form state; each section reads only its own.
   const row = (item ?? {}) as Partial<Skill & Project & Certification & Experience & Achievement>;
   const [values, setValues] = useState({
@@ -38,9 +41,14 @@ export default function ContentEditor({ section, item, busy, categories = [], on
   });
   const project = section === "projects" && item ? item as Project : null;
   const [file, setFile] = useState<File | null>(null); const [imagePreview, setImagePreview] = useState(""); const [error, setError] = useState(""); const [replacement, setReplacement] = useState<ContentInput | null>(null);
+  const [imageSource, setImageSource] = useState(""); const [sourceName, setSourceName] = useState("project"); const [cropOpen, setCropOpen] = useState(false);
+  const editImageRef = useRef<HTMLButtonElement>(null);
   const [categoryOpen, setCategoryOpen] = useState(false); const [categoryBusy, setCategoryBusy] = useState(false);
   const [categoryDraft, setCategoryDraft] = useState({ title: "", description: "", display_order: String(categories.length) });
   useEffect(() => () => { if (imagePreview) URL.revokeObjectURL(imagePreview); }, [imagePreview]);
+  useEffect(() => () => { if (imageSource) URL.revokeObjectURL(imageSource); }, [imageSource]);
+  const savedImageUrl = project?.image_path && supabase ? supabase.storage.from(projectImageBucket).getPublicUrl(project.image_path).data.publicUrl : "";
+  const currentImageUrl = imagePreview || savedImageUrl;
   const update = (name: keyof typeof values, value: string) => { setValues(current => ({ ...current, [name]: value })); setError(""); };
 
   function parse() {
@@ -58,7 +66,7 @@ export default function ContentEditor({ section, item, busy, categories = [], on
     if (!result.success) { setError(result.error.issues[0]?.message || "Check the fields and try again."); return null; }
     return result.data as ContentInput;
   }
-  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (busy || categoryBusy) return; if (categoryOpen) { setError("Save or cancel the new category before saving the skill."); return; } if (section === "skills" && !categories.some(category => category.key === values.category)) { setError("Choose a saved category, or add a category first."); return; } const data = validate(); if (!data) return; if (file && project?.image_path) { setReplacement(data); return; } await onSave(data, file); }
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (busy || categoryBusy) return; if (cropOpen) { setError("Apply or cancel the image crop before saving the project."); return; } if (categoryOpen) { setError("Save or cancel the new category before saving the skill."); return; } if (section === "skills" && !categories.some(category => category.key === values.category)) { setError("Choose a saved category, or add a category first."); return; } const data = validate(); if (!data) return; if (file && project?.image_path) { setReplacement(data); return; } await onSave(data, file); }
   async function createCategory() {
     if (!onCreateCategory || categoryBusy) return;
     const parsed = skillCategoryInputSchema.safeParse({ ...categoryDraft, key: categoryKeyFromTitle(categoryDraft.title), display_order: Number(categoryDraft.display_order) });
@@ -68,7 +76,19 @@ export default function ContentEditor({ section, item, busy, categories = [], on
     catch (cause) { setError(cause instanceof Error ? cause.message : "Category could not be saved. Your skill edits are kept."); }
     finally { setCategoryBusy(false); }
   }
-  function chooseImage(candidate: File | null) { if (!candidate) { setFile(null); setImagePreview(""); return; } try { validateProjectImage(candidate); const preview = URL.createObjectURL(candidate); setFile(candidate); setImagePreview(preview); setError(""); } catch (error) { setFile(null); setImagePreview(""); setError(error instanceof Error ? error.message : "Choose a valid image."); } }
+  function chooseImage(candidate: File | null) {
+    if (!candidate) return;
+    try {
+      validateProjectImage(candidate);
+      setFile(candidate); setImageSource(URL.createObjectURL(candidate)); setImagePreview(URL.createObjectURL(candidate)); setSourceName(candidate.name); setError(""); setCropOpen(true);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Choose a valid image."); }
+  }
+  function applyCrop(cropped: File) {
+    try { validateProjectImage(cropped); setFile(cropped); setImagePreview(URL.createObjectURL(cropped)); closeCrop(); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "The edited image could not be prepared."); }
+  }
+  function closeCrop() { setCropOpen(false); setError(""); requestAnimationFrame(() => editImageRef.current?.focus()); }
+  function discardImageChanges() { setFile(null); setImageSource(""); setImagePreview(""); setCropOpen(false); setError(""); }
 
   const field = (name: keyof typeof values, label: string, options: FieldOptions = {}) => <div><label htmlFor={`editor-${name}`}>{label}</label>{options.multiline ? <Textarea id={`editor-${name}`} value={values[name]} onChange={event => update(name, event.target.value)} disabled={busy} required={options.required} maxLength={options.maxLength} rows={3} placeholder={options.placeholder} /> : <Input id={`editor-${name}`} value={values[name]} onChange={event => update(name, event.target.value)} disabled={busy} required={options.required} type={options.type || "text"} maxLength={options.maxLength} placeholder={options.placeholder} min={options.type === "number" ? 0 : undefined} max={name === "score" ? 100 : undefined} step={name === "score" ? 0.01 : options.type === "number" ? 1 : undefined} />}{options.help && <p className="admin-editor-help">{options.help}</p>}</div>;
   const order = field("display_order", "Display order", { required: true, type: "number", help: "Lower numbers appear first." });
@@ -90,7 +110,8 @@ export default function ContentEditor({ section, item, busy, categories = [], on
       <div className="admin-editor-grid">{field("github_url", "GitHub repository URL", { type: "url", maxLength: 2048 })}{field("demo_url", "Live demo URL", { type: "url", maxLength: 2048 })}</div>
       <div className="admin-editor-grid"><div><label id="status-label" htmlFor="project-status">Project status</label><Select value={values.status} onValueChange={value => update("status", value)} disabled={busy}><SelectTrigger id="project-status" aria-labelledby="status-label" className="w-full h-10"><SelectValue /></SelectTrigger><SelectContent>{projectStatuses.map(status => <SelectItem key={status} value={status}>{statusLabels[status]}</SelectItem>)}</SelectContent></Select></div>{order}</div>
       <p className="admin-editor-help">Draft and archived projects are hidden. Not specified, in progress, and completed projects are public.</p>
-      <div><label htmlFor="project-image">Project image (optional)</label><Input id="project-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => chooseImage(event.target.files?.[0] || null)} disabled={busy} /><p className="admin-editor-help">JPEG, PNG, or WebP; up to 5 MB. Images are uploaded when you save.{project?.image_path && " A current image is saved. Choosing a file will replace it."}</p>{imagePreview && <img src={imagePreview} className="admin-image-preview" alt="New project image preview" />}</div>
+      <div><label htmlFor="project-image">Project image (optional)</label><Input id="project-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => { chooseImage(event.target.files?.[0] || null); event.target.value = ""; }} disabled={busy || cropOpen} /><p className="admin-editor-help">JPEG, PNG, or WebP; up to 5 MB. Crop a new upload or edit the saved image. Changes reach the portfolio only after you save.</p>{currentImageUrl && <><img src={currentImageUrl} className="admin-image-preview admin-project-image-preview" alt={file ? "Pending project image preview" : "Saved project image preview"} /><div className="admin-image-actions"><Button ref={editImageRef} type="button" variant="outline" disabled={busy || cropOpen} onClick={() => { setCropOpen(true); setError(""); }}>Crop & edit image</Button>{file && <Button type="button" variant="outline" disabled={busy || cropOpen} onClick={discardImageChanges}>{project?.image_path ? "Reset to saved image" : "Remove new image"}</Button>}</div>{file && <p className="admin-editor-help" role="status">Image changes are ready. Save the project to publish them.</p>}</>}</div>
+      {cropOpen && (imageSource || savedImageUrl) && <ProjectImageEditor source={imageSource || savedImageUrl} sourceName={imageSource ? sourceName : project?.title || "project"} disabled={busy} onApply={applyCrop} onCancel={closeCrop} />}
     </>}
     {section === "certifications" && <>
       {field("title", "Certification title", { required: true, maxLength: 200 })}
@@ -116,8 +137,8 @@ export default function ContentEditor({ section, item, busy, categories = [], on
       {field("evidence_url", "Details link", { type: "url", maxLength: 2048, help: "Adds a View details link when set." })}
     </>}
     {error && <p className="admin-error admin-modal-error" role="alert">{error}</p>}
-    <DialogFooter><Button type="button" variant="outline" onClick={onCancel} disabled={busy || categoryBusy}>Cancel</Button><Button type="submit" disabled={busy || categoryBusy}>{busy && <Loader2 className="animate-spin" />}Save</Button></DialogFooter>
+    <DialogFooter><Button type="button" variant="outline" onClick={onCancel} disabled={busy || categoryBusy}>Cancel</Button><Button type="submit" disabled={busy || categoryBusy || cropOpen}>{busy && <Loader2 className="animate-spin" />}Save</Button></DialogFooter>
   </form>
-  <AlertDialog open={replacement !== null} onOpenChange={open => { if (!open && !busy) setReplacement(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Replace the current project image?</AlertDialogTitle><AlertDialogDescription>Saving will upload the new image, update the project, and delete its previous image from Storage. Cancel keeps your edits open without saving.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel><AlertDialogAction onClick={event => { event.preventDefault(); const pending = replacement; setReplacement(null); if (pending) void onSave(pending, file); }}>Save and replace</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+  <AlertDialog open={replacement !== null} onOpenChange={open => { if (!open && !busy) setReplacement(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Replace the displayed project image?</AlertDialogTitle><AlertDialogDescription>Save publishes your edited image. The previous file is kept in Storage. Cancel keeps your edits open without saving.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel><AlertDialogAction onClick={event => { event.preventDefault(); const pending = replacement; setReplacement(null); if (pending) void onSave(pending, file); }}>Save and replace</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
   </>;
 }
