@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Derfini C T | Electronics & Communication Engineering Portfolio",
   description: "Explore Derfini C T’s ECE portfolio: embedded systems and data analytics internships, a Power BI solar PV project, a 9.45/10 CGPA, and NPTEL certification.",
   other: {
-    "theme-color": "#0b2620",
+    "theme-color": "#0f172a",
   },
   icons: {
     icon: "/favicon.svg",

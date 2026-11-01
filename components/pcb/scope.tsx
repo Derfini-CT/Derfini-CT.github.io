@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-// Scope channel colours follow bench-oscilloscope convention: CH1 yellow, CH2 cyan, CH3 magenta.
-export const channelColors = ["#f3d55b", "#62d6f2", "#ec84d6"] as const;
+// Blue, cyan, and lavender keep each scope channel distinct within the navy palette.
+export const channelColors = ["#60a5fa", "#67e8f9", "#c4b5fd"] as const;
 const lanes = [0.3, 0.53, 0.77];
 
 export default function Scope({ solo }: { solo: number | null }) {
@@ -64,12 +64,12 @@ export default function Scope({ solo }: { solo: number | null }) {
       ctx.shadowBlur = 0;
       ctx.globalAlpha = 1;
       if (s.sweep < 1) {
-        ctx.fillStyle = "#fff8d6";
+        ctx.fillStyle = "#dbeafe";
         ctx.fillRect(end - 1, 0, 2, h);
       }
       if (s.inside && !reduce) {
         ctx.setLineDash([3, 5]);
-        ctx.strokeStyle = "rgba(238,241,230,.35)";
+        ctx.strokeStyle = "rgba(248,250,252,.35)";
         ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(s.px * w, 0); ctx.lineTo(s.px * w, h); ctx.stroke();
         ctx.setLineDash([]);

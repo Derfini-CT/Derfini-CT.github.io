@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-// A probe-tip cursor with a fading copper trail. Mouse and trackpad only; touch and
+// A probe-tip cursor with a fading blue trail. Mouse and trackpad only; touch and
 // reduced-motion users keep the system cursor and never mount the animation loop.
 export default function ProbeCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
@@ -64,10 +64,10 @@ export default function ProbeCursor() {
       ctx.clearRect(0, 0, innerWidth, innerHeight);
       if (points.length > 1) {
         ctx.lineCap = "round"; ctx.lineJoin = "round";
-        ctx.shadowColor = "#e8a868"; ctx.shadowBlur = 10;
+        ctx.shadowColor = "#60a5fa"; ctx.shadowBlur = 10;
         for (let i = 1; i < points.length; i++) {
           const life = 1 - (now - points[i].t) / 420;
-          ctx.strokeStyle = `rgba(232,168,104,${(life * 0.75).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(96,165,250,${(life * 0.75).toFixed(3)})`;
           ctx.lineWidth = 0.5 + life * 2.2;
           ctx.beginPath(); ctx.moveTo(points[i - 1].x, points[i - 1].y); ctx.lineTo(points[i].x, points[i].y); ctx.stroke();
         }

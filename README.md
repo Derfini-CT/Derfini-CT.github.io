@@ -1,6 +1,6 @@
 # Derfini C T — Portfolio
 
-The existing React + Tailwind portfolio prepared for **GitHub Pages** at **https://derfini-ct.github.io/**. This checkout preserves the history of **Derfini-CT/Derfini-CT.github.io**. The replacement source was prepared on **codex/github-pages-portfolio**, starting with commit **ee65b3c**. The public colors, typography, layout, spacing, cards, and animations are preserved.
+The existing React + Tailwind portfolio prepared for **GitHub Pages** at **https://derfini-ct.github.io/**. This checkout preserves the history of **Derfini-CT/Derfini-CT.github.io**. The replacement source was prepared on **codex/github-pages-portfolio**, starting with commit **ee65b3c**. The current navy, off-white, and soft-blue palette is shared by the public site and admin panel. Typography, layout, spacing, cards, and animations are preserved.
 
 ## Publish
 

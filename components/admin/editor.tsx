@@ -132,7 +132,7 @@ export default function ContentEditor({ section, item, busy, categories = [], on
     {section === "achievements" && <>
       {field("title", "Achievement title", { required: true, maxLength: 200 })}
       {field("description", "Description", { maxLength: 10000, multiline: true })}
-      <div className="admin-editor-grid">{field("recognition", "Highlight label", { maxLength: 100, placeholder: "For example, First place", help: "Shown in gold above the title." })}{field("event_name", "Event", { maxLength: 200 })}</div>
+      <div className="admin-editor-grid">{field("recognition", "Highlight label", { maxLength: 100, placeholder: "For example, First place", help: "Shown in the accent colour above the title." })}{field("event_name", "Event", { maxLength: 200 })}</div>
       <div className="admin-editor-grid">{field("achieved_on", "Date", { type: "date" })}{order}</div>
       {field("evidence_url", "Details link", { type: "url", maxLength: 2048, help: "Adds a View details link when set." })}
     </>}

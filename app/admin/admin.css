@@ -1,20 +1,20 @@
-/* Admin wears the same solder-mask palette as the public board. The shadcn tokens are
+/* Admin wears the same navy and soft-blue palette as the public portfolio. The shadcn tokens are
    swapped on :root while an admin page is mounted, so dialogs, selects and toasts that
    portal to <body> pick them up too. The public site never contains .admin-surface. */
 :root:has(.admin-surface) {
-  --mask: #0b2620; --mask-2: #10322a; --mask-3: #1d4a3e; --deep: #081d18;
-  --copper: #d9985f; --gold: #ecc768; --silk: #eef1e6; --silk-2: #a9bdb2;
+  --mask: #0f172a; --mask-2: #16213a; --mask-3: #2b3d5c; --deep: #0b1220;
+  --copper: #93c5fd; --gold: #60a5fa; --silk: #f8fafc; --silk-2: #b4c2d6;
   --background: var(--mask); --foreground: var(--silk);
   --card: var(--mask-2); --card-foreground: var(--silk);
   --popover: var(--mask-2); --popover-foreground: var(--silk);
   --primary: var(--gold); --primary-foreground: var(--mask);
   --secondary: var(--mask-3); --secondary-foreground: var(--silk);
   --muted: var(--mask-2); --muted-foreground: var(--silk-2);
-  --accent: var(--mask-3); --accent-foreground: var(--gold);
-  --destructive: #c8414f; --border: var(--mask-3); --input: #2c6252; --ring: var(--gold);
+  --accent: var(--mask-3); --accent-foreground: var(--copper);
+  --destructive: #c8414f; --border: var(--mask-3); --input: #58729a; --ring: var(--gold);
   --sidebar: var(--deep); --sidebar-foreground: var(--silk);
   --sidebar-primary: var(--gold); --sidebar-primary-foreground: var(--mask);
-  --sidebar-accent: var(--mask-3); --sidebar-accent-foreground: var(--gold);
+  --sidebar-accent: var(--mask-3); --sidebar-accent-foreground: var(--copper);
   --sidebar-border: var(--mask-3); --sidebar-ring: var(--gold);
   --font-sans: "Hanken Grotesk", "Segoe UI", sans-serif;
   color-scheme: dark;
@@ -25,7 +25,7 @@
 .admin-surface {
   min-height: 100vh; color: var(--silk);
   background:
-    radial-gradient(circle at 1px 1px, rgb(169 189 178 / 9%) 1px, transparent 0) 0 0 / 22px 22px,
+    radial-gradient(circle at 1px 1px, rgb(180 194 214 / 9%) 1px, transparent 0) 0 0 / 22px 22px,
     var(--mask);
 }
 .admin-surface h1, .admin-surface h2 { font-family: "Bricolage Grotesque", var(--font-sans); color: var(--silk); }
@@ -45,7 +45,7 @@
   border: 1px solid var(--mask-3); border-radius: 18px; background: var(--mask-2);
   box-shadow: 0 30px 80px rgb(0 0 0 / 35%);
 }
-/* A copper trace runs along the card's top edge and ends in a lit pad. */
+/* A soft-blue trace runs along the card's top edge and ends in a lit pad. */
 .admin-login-card::before { content: ""; position: absolute; top: 0; left: 36px; right: 36px; height: 2px; background: linear-gradient(90deg, transparent, var(--copper) 20%, var(--gold)); }
 .admin-login-card::after { content: ""; position: absolute; top: -4px; right: 32px; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 14px var(--gold); }
 .admin-login-icon { margin: 30px 0 18px; width: 56px; height: 56px; border: 1px solid var(--mask-3); background: var(--deep); color: var(--gold); border-radius: 14px; display: grid; place-items: center; }
@@ -55,7 +55,7 @@
 .admin-return { font-size: 14px; color: var(--copper); display: inline-block; margin-top: 24px; }
 .admin-return:hover, .admin-return:focus-visible { color: var(--gold); }
 
-.admin-notice { border: 1px solid rgb(236 199 104 / 35%); background: rgb(236 199 104 / 8%); border-radius: 10px; padding: 18px 20px; margin-block: 22px; color: var(--silk-2); font-size: 14px; }
+.admin-notice { border: 1px solid rgb(96 165 250 / 35%); background: rgb(96 165 250 / 8%); border-radius: 10px; padding: 18px 20px; margin-block: 22px; color: var(--silk-2); font-size: 14px; }
 .admin-notice strong { font-weight: 650; color: var(--gold); }
 .admin-notice p { margin: 7px 0 0; line-height: 1.8; }
 .admin-error { border: 1px solid rgb(236 120 132 / 45%); background: rgb(200 65 79 / 14%); color: #ffb3bb; padding: 13px 16px; border-radius: 8px; font-size: 14px; }
@@ -68,7 +68,7 @@
 .admin-dashboard [data-sidebar="menu-button"][data-active="true"] { box-shadow: inset 2px 0 0 var(--gold); }
 .admin-kicker { font-size: 12px; color: var(--silk-2); display: flex; align-items: center; gap: 8px; margin-top: 4px; }
 .admin-kicker::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #6ee07f; box-shadow: 0 0 8px #6ee07f; }
-.admin-topbar { display: flex; align-items: center; gap: 14px; padding: 17px 28px; background: rgb(8 29 24 / 85%); backdrop-filter: blur(8px); border-bottom: 1px solid var(--mask-3); font-size: 14px; color: var(--silk-2); position: sticky; top: 0; z-index: 5; }
+.admin-topbar { display: flex; align-items: center; gap: 14px; padding: 17px 28px; background: rgb(11 18 32 / 85%); backdrop-filter: blur(8px); border-bottom: 1px solid var(--mask-3); font-size: 14px; color: var(--silk-2); position: sticky; top: 0; z-index: 5; }
 .admin-topbar a { color: var(--copper); }
 .admin-topbar a:hover, .admin-topbar a:focus-visible { color: var(--gold); }
 .admin-main { padding: 36px; max-width: 1300px; width: 100%; margin-inline: auto; }
@@ -78,7 +78,7 @@
 .admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-block: 26px; }
 .admin-stat { position: relative; overflow: hidden; padding: 24px; background: var(--mask-2); border: 1px solid var(--mask-3); border-radius: 14px; transition: border-color .25s, translate .3s cubic-bezier(.2,.8,.2,1), box-shadow .25s; }
 .admin-stat::before { content: ""; position: absolute; left: 24px; top: 0; width: 34px; height: 2px; background: var(--copper); transition: width .35s cubic-bezier(.2,.8,.2,1), background .25s; }
-.admin-stat:hover, .admin-stat:focus-visible { border-color: rgb(217 152 95 / 60%); translate: 0 -3px; box-shadow: 0 16px 34px rgb(0 0 0 / 28%); }
+.admin-stat:hover, .admin-stat:focus-visible { border-color: rgb(147 197 253 / 60%); translate: 0 -3px; box-shadow: 0 16px 34px rgb(0 0 0 / 28%); }
 .admin-stat:hover::before, .admin-stat:focus-visible::before { width: calc(100% - 48px); background: var(--gold); }
 .admin-stat > span { font-size: 14px; color: var(--silk-2); }
 .admin-stat strong { display: block; font-family: "Bricolage Grotesque", var(--font-sans); font-size: 36px; font-weight: 700; line-height: 1.2; margin-top: 10px; color: var(--gold); }
@@ -105,9 +105,9 @@
 .admin-modal-error { margin-block: 5px; }
 .admin-project-image-preview { width: 100%; max-height: 220px; padding: 8px; background: var(--deep); }
 .admin-image-actions, .admin-crop-tools, .admin-crop-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.admin-crop-editor { min-width: 0; padding: 18px; border: 1px solid rgb(236 199 104 / 40%); border-radius: 12px; background: var(--deep); }
+.admin-crop-editor { min-width: 0; padding: 18px; border: 1px solid rgb(96 165 250 / 40%); border-radius: 12px; background: var(--deep); }
 .admin-crop-header h3 { color: var(--gold); font-size: 17px; font-weight: 650; outline-offset: 5px; }
-.admin-crop-preview { display: grid; place-items: center; overflow: hidden; width: 100%; max-height: 300px; margin-block: 16px; border: 1px solid var(--mask-3); border-radius: 8px; background: #04110e; }
+.admin-crop-preview { display: grid; place-items: center; overflow: hidden; width: 100%; max-height: 300px; margin-block: 16px; border: 1px solid var(--mask-3); border-radius: 8px; background: #080f1e; }
 .admin-crop-preview canvas { min-width: 0; min-height: 0; max-height: 300px; }
 .admin-crop-loading { display: flex; align-items: center; gap: 8px; color: var(--silk-2); font-size: 14px; }
 .admin-crop-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; padding: 0; border: 0; min-width: 0; }
@@ -131,7 +131,7 @@
 .admin-site-form { padding-bottom: 96px; }
 .admin-site-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
 .admin-site-jump a { font-size: 13px; padding: 6px 12px; border: 1px solid var(--mask-3); border-radius: 999px; color: var(--silk-2); background: var(--mask-2); }
-.admin-site-jump a:hover, .admin-site-jump a:focus-visible { color: var(--gold); border-color: rgb(236 199 104 / 50%); }
+.admin-site-jump a:hover, .admin-site-jump a:focus-visible { color: var(--gold); border-color: rgb(96 165 250 / 50%); }
 .admin-site-group { scroll-margin-top: 90px; }
 .admin-site-group > h2 { scroll-margin-top: 90px; }
 .admin-site-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; margin-top: 20px; }
@@ -150,7 +150,7 @@
 .admin-site-savebar {
   position: fixed; z-index: 20; right: 24px; bottom: 20px; left: calc(var(--sidebar-width) + 24px);
   display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 20px;
-  border: 1px solid var(--mask-3); border-radius: 14px; background: rgb(8 29 24 / 92%); backdrop-filter: blur(10px);
+  border: 1px solid var(--mask-3); border-radius: 14px; background: rgb(11 18 32 / 92%); backdrop-filter: blur(10px);
   box-shadow: 0 18px 40px rgb(0 0 0 / 40%);
 }
 .admin-site-savebar > p { flex: 1; margin: 0; font-size: 14px; color: var(--silk-2); }
