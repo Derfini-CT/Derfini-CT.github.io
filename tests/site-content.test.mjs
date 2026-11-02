@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { countable, defaultSiteContent, fullName, resolveSiteContent, siteContentSchema } from "../lib/portfolio/site.ts";
+import { defaultSiteContent, fullName, resolveSiteContent, siteContentSchema } from "../lib/portfolio/site.ts";
 
 test("the built-in text is itself valid, so a fresh install saves cleanly", () => {
   assert.equal(siteContentSchema.safeParse(defaultSiteContent).success, true);
@@ -25,9 +25,10 @@ test("a saved list replaces the whole default list, and items gain fields added 
 });
 
 test("a field of the wrong type falls back instead of breaking the page", () => {
-  const site = resolveSiteContent({ profile: { firstName: 42 }, nextChapter: { show: "yes" } });
+  const site = resolveSiteContent({ profile: { firstName: 42 }, hero: { availability: true }, nextChapter: { show: "yes" } });
   assert.equal(site.profile.firstName, "Derfini");
   assert.equal(site.nextChapter.show, defaultSiteContent.nextChapter.show);
+  assert.equal(site.hero.availability, defaultSiteContent.hero.availability);
 });
 
 test("an invalid fixed-length list falls back without discarding other saved content", () => {
@@ -58,6 +59,28 @@ test("older saved content gains reviewed photo, typography and interface default
   assert.equal(site.hero.nameSize, "balanced");
   assert.equal(site.labels.nav.about, "Profile");
   assert.equal(site.labels.form.submit, "Prepare email");
+});
+
+test("older saved rows gain project dialog labels and an availability badge without losing saved text", () => {
+  const site = resolveSiteContent({ hero: { title: "My saved headline" }, labels: { actions: { repository: "Source code" } } });
+  assert.equal(site.hero.title, "My saved headline");
+  assert.equal(site.hero.availability, "Open to internships");
+  assert.equal(site.labels.actions.repository, "Source code");
+  assert.equal(site.labels.actions.viewProject, "View project");
+  assert.equal(site.labels.actions.viewImage, "View full image");
+  assert.equal(site.labels.actions.close, "Close");
+  assert.equal(site.labels.actions.featured, "Featured project");
+  assert.equal(site.labels.actions.backToProject, "Back to project");
+  assert.equal(site.labels.fallback.projectImageUnavailable, "Image unavailable. You can still view the project details and repository.");
+});
+
+test("an explicitly hidden availability badge and custom project labels survive a JSON save and reload", () => {
+  const actions = { viewProject: "Read case study", viewImage: "Enlarge image", close: "Done", featured: "Selected work", backToProject: "Return to details" };
+  const saved = resolveSiteContent({ hero: { availability: "" }, labels: { actions } });
+  const reloaded = resolveSiteContent(JSON.parse(JSON.stringify(saved)));
+  assert.equal(reloaded.hero.availability, "");
+  for (const [key, value] of Object.entries(actions)) assert.equal(reloaded.labels.actions[key], value);
+  assert.equal(siteContentSchema.safeParse(reloaded).success, true);
 });
 
 test("a malformed additional education item cannot discard saved scores", () => {
@@ -91,14 +114,6 @@ test("the editor refuses an empty heading and a bad link", () => {
     const invalid = structuredClone(defaultSiteContent); invalid.profile.resumeUrl = url;
     assert.equal(siteContentSchema.safeParse(invalid).success, false);
   }
-});
-
-test("only plain numbers count up, keeping decimals and leading zeros", () => {
-  assert.deepEqual(countable("9.45"), { value: 9.45, decimals: 2, pad: 0 });
-  assert.deepEqual(countable("02"), { value: 2, decimals: 0, pad: 2 });
-  assert.deepEqual(countable("84.0"), { value: 84, decimals: 1, pad: 0 });
-  assert.equal(countable("Power BI"), null);
-  assert.equal(countable("A+"), null);
 });
 
 test("the full name joins both parts and tolerates an empty second part", () => {

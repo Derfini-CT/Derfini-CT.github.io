@@ -1,6 +1,6 @@
 # Derfini C T — Portfolio
 
-The existing React + Tailwind portfolio prepared for **GitHub Pages** at **https://derfini-ct.github.io/**. This checkout preserves the history of **Derfini-CT/Derfini-CT.github.io**. The replacement source was prepared on **codex/github-pages-portfolio**, starting with commit **ee65b3c**. The current navy, off-white, and soft-blue palette is shared by the public site and admin panel. Typography, layout, spacing, cards, and animations are preserved.
+The existing React + Tailwind portfolio prepared for **GitHub Pages** at **https://derfini-ct.github.io/**. This checkout preserves the history of **Derfini-CT/Derfini-CT.github.io**. The replacement source was prepared on **codex/github-pages-portfolio**, starting with commit **ee65b3c**. The navy, off-white, and soft-blue palette is shared by the public site and admin panel. Compact project cards open full descriptions and full-size images; academic values and About text stay readable without counting or dimming effects.
 
 ## Publish
 
@@ -65,6 +65,10 @@ Browser guards send unauthenticated or unauthorized users to `/admin/`. Exported
 4. Open **Categories → Add category** to create a skill group with a name, optional description, and display order. Rename a category without losing its assigned skills. Move its skills to another category before deleting it; the database prevents deleting an in-use category.
 5. Open **Skills → Add skill**. Choose an existing category, or use **Add category** beside the selector to create one while keeping the skill draft. Set the skill name, optional level, and order, then save. VLSI stays in the existing technical category unless you move it.
 6. Use the other sidebar pages to manage projects, certifications, experience, and achievements. Refresh the public portfolio after saving to see the changes; content edits do not require a Git commit or deployment.
+
+**Site content → Hero → Availability badge** edits or hides the internship availability line; an empty value hides it. **Buttons and card labels** contains View project, View full image, Close, Featured project and Back to project. The image error message is in **Empty states and supporting labels**. Existing saved content gains these defaults without a database migration.
+
+The first two public projects, in display order, are featured. All public projects remain visible as summaries with repository/demo links. **View project** opens the full saved description; selecting an image opens an uncropped full-size view. Escape or Close dismisses the dialog and returns keyboard focus to its launch button. The public site uses the normal browser pointer; hero, hover, section and waveform effects remain, with reduced-motion support.
 
 ## Supabase setup
 

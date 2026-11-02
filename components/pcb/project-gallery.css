@@ -1,0 +1,69 @@
+/* Compact cards retain the portfolio's navy surfaces and open their longer
+   content in a single accessible dialog. The portal owns its colour tokens. */
+.project-gallery { display: grid; gap: 24px; outline-offset: 6px; }
+.project-gallery .gallery-project { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); }
+.project-gallery .project + .project { margin-top: 0; }
+.project-gallery .gallery-project-body { padding: clamp(24px, 3vw, 34px); min-width: 0; }
+.project-gallery .gallery-project-body h3 { font-size: clamp(25px, 2.5vw, 32px); }
+.project-gallery .project-summary { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.gallery-featured { display: inline-block; margin-bottom: 12px; color: var(--copper, #93c5fd); font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+.project-gallery .gallery-image-button { min-width: 0; min-height: 260px; border: 0; color: var(--silk); cursor: zoom-in; font: inherit; }
+.project-gallery .gallery-image-button img { object-fit: contain; padding: 16px 16px 48px; }
+.gallery-image-button:hover .gallery-image-label, .gallery-detail-image-button:hover .gallery-image-label { border-color: var(--gold, #60a5fa); background: #16213a; }
+.gallery-image-label { position: absolute; right: 14px; bottom: 14px; left: 14px; width: fit-content; max-width: calc(100% - 28px); display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border: 1px solid #3c5276; border-radius: 999px; color: #f8fafc; background: #0b1220; font-size: 12px; line-height: 1.4; transition: border-color .2s, background-color .2s; }
+.gallery-no-image { min-height: 260px; color: var(--silk-2); align-content: center; gap: 12px; text-align: center; }
+.gallery-no-image span { max-width: 25ch; font-size: 16px; }
+.gallery-image-fallback { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; min-height: 180px; padding: 24px; text-align: center; color: var(--silk-2, #b4c2d6); font-size: 14px; }
+.gallery-project-actions, .gallery-dialog-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 24px; }
+.gallery-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.gallery-tags li { max-width: 100%; overflow-wrap: anywhere; padding: 5px 11px; border: 1px solid rgb(147 197 253 / 35%); border-radius: 999px; color: #bfdbfe; background: rgb(147 197 253 / 7%); font-size: 12px; line-height: 1.5; }
+.gallery-action { display: inline-flex; justify-content: center; align-items: center; gap: 7px; min-height: 42px; min-width: 0; max-width: 100%; overflow-wrap: anywhere; padding: 9px 14px; border: 1px solid transparent; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; line-height: 1.4; cursor: pointer; text-align: center; text-decoration: none; transition: background-color .2s, border-color .2s, color .2s; }
+.project-gallery .gallery-action--primary, .pcb-project-dialog .gallery-action--primary { background: #60a5fa; color: #0f172a; }
+.project-gallery .gallery-action--primary:hover, .pcb-project-dialog .gallery-action--primary:hover { background: #93c5fd; }
+.project-gallery .gallery-action--ghost, .pcb-project-dialog .gallery-action--ghost { border-color: #3c5276; color: #f8fafc; background: #0b1220; }
+.project-gallery .gallery-action--ghost:hover, .pcb-project-dialog .gallery-action--ghost:hover { border-color: #93c5fd; background: #1b2d4b; }
+
+[data-slot="dialog-content"].pcb-project-dialog {
+  --mask: #0f172a; --mask-2: #16213a; --mask-3: #2b3d5c; --screen: #080f1e;
+  --gold: #60a5fa; --copper: #93c5fd; --silk: #f8fafc; --silk-2: #b4c2d6;
+  --background: #0f172a; --foreground: #f8fafc; --ring: #60a5fa;
+  width: calc(100% - 32px); max-width: 900px; max-height: 90dvh; overflow-y: auto; overscroll-behavior: contain;
+  padding: clamp(20px, 3vw, 32px); gap: 20px; border: 1px solid #3c5276; border-radius: 20px;
+  color: #f8fafc; background: #0f172a; font-family: "Hanken Grotesk", "Segoe UI", sans-serif;
+  box-shadow: 0 24px 90px rgb(0 0 0 / 50%); color-scheme: dark;
+}
+[data-slot="dialog-content"].pcb-project-dialog--image { max-width: 1180px; }
+.pcb-project-dialog :focus-visible { outline: 2px solid #60a5fa; outline-offset: 4px; border-radius: 5px; }
+.pcb-project-dialog .gallery-dialog-header { padding-right: 34px; text-align: left; }
+.pcb-project-dialog .gallery-dialog-title { margin: 0; font-family: "Bricolage Grotesque", "Segoe UI", sans-serif; font-size: clamp(22px, 2.5vw, 32px); font-weight: 650; line-height: 1.2; overflow-wrap: anywhere; }
+.pcb-project-dialog .gallery-dialog-summary { color: #b4c2d6; font-size: 15px; line-height: 1.65; }
+.gallery-dialog-close { position: absolute; top: 17px; right: 17px; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #3c5276; border-radius: 50%; background: #16213a; color: #f8fafc; cursor: pointer; }
+.gallery-dialog-close:hover { border-color: #93c5fd; }
+.gallery-detail-image-button { position: relative; display: block; min-width: 0; width: 100%; padding: 12px 12px 48px; border: 1px solid #2b3d5c; border-radius: 12px; background: #080f1e; cursor: zoom-in; }
+.gallery-detail-image-button img { display: block; width: 100%; max-height: 340px; object-fit: contain; }
+.gallery-full-image { display: block; width: 100%; height: auto; max-height: 64dvh; object-fit: contain; border-radius: 10px; background: #080f1e; }
+.gallery-image-fallback.gallery-full-image { display: flex; }
+.gallery-dialog-details { padding-top: 18px; border-top: 1px solid #2b3d5c; }
+.gallery-dialog-details h3 { margin: 0 0 8px; font-size: 15px; font-weight: 650; line-height: 1.5; }
+.gallery-dialog-details p { margin: 0; color: #b4c2d6; font-size: 15px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+.gallery-dialog-actions { margin-top: 0; }
+.gallery-unavailable { margin: 0; padding: 30px 18px; border-radius: 10px; background: #080f1e; color: #b4c2d6; }
+
+@media (max-width: 900px) {
+  .project-gallery .gallery-project { grid-template-columns: minmax(0, 1fr); }
+  .project-gallery .gallery-image-button, .gallery-no-image { min-height: 240px; }
+}
+@media (max-width: 560px) {
+  .project-gallery .gallery-project-body { padding: 24px 22px; }
+  .gallery-project-actions { gap: 8px; }
+  .gallery-project-actions .gallery-action { flex: 1 1 auto; }
+  [data-slot="dialog-content"].pcb-project-dialog { width: calc(100% - 24px); padding: 20px 16px; border-radius: 14px; }
+  .pcb-project-dialog .gallery-dialog-title { font-size: 23px; }
+  .gallery-dialog-actions .gallery-action { flex: 1 1 auto; }
+  .gallery-full-image { max-height: 58dvh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-action, .gallery-image-label { transition: none; }
+  [data-slot="dialog-content"].pcb-project-dialog { animation: none !important; transition: none !important; }
+  body:has(.pcb-project-dialog) [data-slot="dialog-overlay"] { animation: none !important; transition: none !important; }
+}

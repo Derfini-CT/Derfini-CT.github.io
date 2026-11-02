@@ -19,15 +19,15 @@ const blankHighlight = { value: "", unit: "", label: "" };
 const blankEducation = { year: "", level: "", school: "", detail: "", score: "", unit: "", note: "" };
 const labelNames: Record<string, string> = {
   about: "About", education: "Education", skills: "Skills", projects: "Projects", experience: "Experience", certifications: "Certifications", achievements: "Achievements", contact: "Contact",
-  resume: "Navigation resume button", viewResume: "View resume button", linkedin: "LinkedIn button", github: "GitHub button", contactMe: "Contact button", repository: "Repository button", liveDemo: "Live demo button", keyFeatures: "Project features heading", certificate: "Certificate button", viewDetails: "Achievement details link",
+  resume: "Navigation resume button", viewResume: "View resume button", linkedin: "LinkedIn button", github: "GitHub button", contactMe: "Contact button", repository: "Repository button", liveDemo: "Live demo button", keyFeatures: "Project features heading", certificate: "Certificate button", viewDetails: "Achievement details link", viewProject: "Project details button", viewImage: "Full-size image button", close: "Project dialog close button", featured: "Featured project badge", backToProject: "Back to project button",
   nameLabel: "Name field label", namePlaceholder: "Name placeholder", emailLabel: "Email field label", emailPlaceholder: "Email placeholder", subjectLabel: "Subject field label", subjectPlaceholder: "Subject placeholder", messageLabel: "Message field label", messagePlaceholder: "Message placeholder", submit: "Prepare email button", help: "Email form explanation", draftReady: "Draft ready message", openDraft: "Reopen email draft link", copyEmail: "Copy email button", emailCopied: "Email copied message", defaultSubject: "Default email subject", greeting: "Email greeting", from: "Email sender label", replyTo: "Email reply address label",
-  project: "Project visual label", projectDetails: "Missing project features", organization: "Missing organization", experienceDates: "Missing internship dates", present: "Ongoing experience end date", experienceCategory: "Other experience category", embeddedCategory: "Embedded experience category", analyticsCategory: "Analytics experience category", issuer: "Missing certificate issuer", completionDetails: "Missing certificate completion details", completed: "Certificate completion date prefix", courseScore: "Certificate score label", achievement: "Missing achievement recognition", mobileDescription: "Mobile navigation description",
+  project: "Project visual label", projectDetails: "Missing project features", projectImageUnavailable: "Unavailable project image message", organization: "Missing organization", experienceDates: "Missing internship dates", present: "Ongoing experience end date", experienceCategory: "Other experience category", embeddedCategory: "Embedded experience category", analyticsCategory: "Analytics experience category", issuer: "Missing certificate issuer", completionDetails: "Missing certificate completion details", completed: "Certificate completion date prefix", courseScore: "Certificate score label", achievement: "Missing achievement recognition", mobileDescription: "Mobile navigation description",
 };
 function labelLimit(group: keyof SiteContent["labels"], key: string) {
   if (group === "nav") return 40;
   if (group === "actions") return 80;
   if (group === "form") return key === "messagePlaceholder" ? 300 : ["help", "draftReady"].includes(key) ? 400 : key === "defaultSubject" ? 150 : key.endsWith("Placeholder") ? 160 : 80;
-  return key === "projectDetails" ? 1000 : ["skills", "projects", "experience", "certifications", "completionDetails"].includes(key) ? 300 : ["organization", "experienceDates", "issuer"].includes(key) ? 160 : key === "mobileDescription" ? 200 : key === "present" ? 40 : 80;
+  return key === "projectDetails" ? 1000 : ["skills", "projects", "experience", "certifications", "completionDetails", "projectImageUnavailable"].includes(key) ? 300 : ["organization", "experienceDates", "issuer"].includes(key) ? 160 : key === "mobileDescription" ? 200 : key === "present" ? 40 : 80;
 }
 
 function Group({ id, title, hint, children }: { id: string; title: string; hint?: string; children: ReactNode }) {
@@ -160,12 +160,13 @@ export default function SiteEditor() {
       <Field id="hero-kicker" label="Small line above your name" value={site.hero.kicker} onChange={hero("kicker")} maxLength={80} disabled={disabled} />
       <Field id="hero-headline" label="Headline under your name" value={site.hero.title} onChange={hero("title")} maxLength={160} disabled={disabled} />
       <Field id="hero-intro" label="Introduction" value={site.hero.intro} onChange={hero("intro")} maxLength={600} multiline disabled={disabled} />
+      <Field id="hero-availability" label="Availability badge (optional)" value={site.hero.availability} onChange={hero("availability")} maxLength={80} help="A short opportunity or availability line, such as Open to internships. Empty hides the badge." disabled={disabled} />
       <Field id="scope-left" label="Oscilloscope caption, left" value={site.hero.scopeLeft} onChange={hero("scopeLeft")} maxLength={80} disabled={disabled} />
       <Field id="scope-right" label="Oscilloscope caption, right" value={site.hero.scopeRight} onChange={hero("scopeRight")} maxLength={80} disabled={disabled} />
       <div><label htmlFor="hero-name-size">Name size</label><select id="hero-name-size" className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={site.hero.nameSize} disabled={disabled} onChange={event => hero("nameSize")(event.target.value as SiteContent["hero"]["nameSize"])}><option value="balanced">Compact & balanced</option><option value="large">Original large</option></select><p className="admin-editor-help">Compact keeps your name readable without overpowering your title. The colours and animations stay the same.</p></div>
     </Group>
 
-    <Group id="highlights" title="Highlights" hint="The strip of big numbers under the hero. Plain numbers like 9.45 or 02 count up; anything else is shown as written. Up to six.">
+    <Group id="highlights" title="Highlights" hint="The strip of highlights under the hero. Values are displayed exactly as entered, including decimals and leading zeros. Up to six.">
       {site.highlights.map((item, i) => <div className="admin-site-row" key={i}>
         <Field id={`hl-value-${i}`} label="Value" value={item.value} onChange={listItem("highlights", i, "value")} maxLength={24} disabled={disabled} />
         <Field id={`hl-unit-${i}`} label="Unit" value={item.unit} onChange={listItem("highlights", i, "unit")} maxLength={16} placeholder="/10" disabled={disabled} />
@@ -183,7 +184,7 @@ export default function SiteEditor() {
     </Group>
 
     <Group id="about" title="About">
-      <Field id="about-lead" label="Opening paragraph" value={site.about.lead} onChange={about("lead")} maxLength={600} multiline help="Shown large; it lights up word by word as visitors scroll." disabled={disabled} />
+      <Field id="about-lead" label="Opening paragraph" value={site.about.lead} onChange={about("lead")} maxLength={600} multiline help="Shown as a large, fully readable opening paragraph." disabled={disabled} />
       <Field id="about-body" label="More about you" value={site.about.body} onChange={about("body")} maxLength={3000} multiline rows={5} help="Leave a blank line between paragraphs." disabled={disabled} />
       <Field id="about-note" label="Highlighted note" value={site.about.note} onChange={about("note")} maxLength={400} multiline rows={2} help="The boxed line with the shield icon. Empty hides it." disabled={disabled} />
     </Group>

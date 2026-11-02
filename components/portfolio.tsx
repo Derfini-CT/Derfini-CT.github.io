@@ -3,19 +3,19 @@
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
 import { ArrowUpRight, Award, BarChart3, BookOpen, Check, Code2, Copy, Cpu, FileText, Code2 as Github, Link2 as Linkedin, Mail, MapPin, Menu, Radio, Send, ShieldCheck } from "lucide-react";
 import { type PortfolioContent } from "@/lib/portfolio/types";
-import { countable, fullName } from "@/lib/portfolio/site";
+import { fullName } from "@/lib/portfolio/site";
 import { safeWebUrl } from "@/lib/portfolio/validation";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Scope from "@/components/pcb/scope";
-import ProbeCursor from "@/components/pcb/probe-cursor";
+import ProjectGallery from "@/components/pcb/project-gallery";
 import "@/components/pcb/pcb.css";
 
 const navigationIds = ["about", "education", "skills", "projects", "experience", "certifications", "achievements", "contact"] as const;
 // The scope has three fixed channels; their titles and text come from the admin.
 const interestIcons = [Cpu, Radio, BarChart3];
 
-function ExternalLink({ href, children, className = "", magnetic = false }: { href: string; children: ReactNode; className?: string; magnetic?: boolean }) {
-  return <a href={href} target="_blank" rel="noopener noreferrer" className={className} data-magnetic={magnetic || undefined}>{children}<span className="sr-only"> (opens in a new tab)</span></a>;
+function ExternalLink({ href, children, className = "" }: { href: string; children: ReactNode; className?: string }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{children}<span className="sr-only"> (opens in a new tab)</span></a>;
 }
 function Tags({ items }: { items: string[] }) { return <ul className="tags">{items.map((item, index) => <li key={`${index}-${item}`}>{item}</li>)}</ul>; }
 // The resume can be a file served by this site ("/Derfini_Resume.pdf") or a full web link.
@@ -29,48 +29,6 @@ function Section({ id, title, intro, className = "", children }: { id: string; t
   </div></section>;
 }
 
-// Counts up once when scrolled into view. The final value is rendered first so the number is right without JavaScript.
-function Count({ value, decimals = 0, pad = 0 }: { value: number; decimals?: number; pad?: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const format = (n: number) => n.toFixed(decimals).padStart(pad, "0");
-    const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let raf = 0;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      observer.disconnect();
-      const begin = performance.now();
-      const tick = (now: number) => {
-        const p = Math.min(1, (now - begin) / 1100);
-        el.textContent = format(value * (1 - (1 - p) ** 3));
-        if (p < 1) raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-    }, { threshold: 0.6 });
-    observer.observe(el);
-    return () => { observer.disconnect(); cancelAnimationFrame(raf); };
-  }, [value, decimals, pad]);
-  return <span ref={ref}>{value.toFixed(decimals).padStart(pad, "0")}</span>;
-}
-
-// Plain numbers count up; anything else ("Power BI", "A+") is shown as written.
-function Value({ text }: { text: string }) {
-  const number = countable(text);
-  return number ? <Count value={number.value} decimals={number.decimals} pad={number.pad} /> : <>{text}</>;
-}
-
-function SolarIllustration() {
-  const bars = Array.from({ length: 13 }, (_, i) => Math.max(0.04, Math.sin(((i + 0.5) / 13) * Math.PI) ** 1.6));
-  return <svg className="solar" viewBox="0 0 320 220" aria-hidden="true">
-    <circle className="solar-sun" cx="160" cy="46" r="16" />
-    {[0, 45, 90, 135, 180, 225, 270, 315].map(a => <line key={a} className="solar-ray" x1={160 + Math.cos(a * Math.PI / 180) * 24} y1={46 + Math.sin(a * Math.PI / 180) * 24} x2={160 + Math.cos(a * Math.PI / 180) * 32} y2={46 + Math.sin(a * Math.PI / 180) * 32} />)}
-    {bars.map((b, i) => <rect key={i} className="solar-bar" style={{ "--i": i } as CSSProperties} x={22 + i * 22} y={196 - b * 110} width="14" height={b * 110} rx="2" />)}
-    <path className="solar-curve" d={bars.map((b, i) => `${i ? "L" : "M"}${29 + i * 22} ${190 - b * 118}`).join(" ")} />
-    <line className="solar-axis" x1="14" y1="197" x2="306" y2="197" />
-  </svg>;
-}
-
 export default function Portfolio({ content }: { content: PortfolioContent }) {
   const [active, setActive] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -81,7 +39,6 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
   const [pinned, setPinned] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const aboutRef = useRef<HTMLParagraphElement>(null);
   const pendingMenuSection = useRef<string | null>(null);
   const solo = hovered ?? pinned;
   const { site } = content;
@@ -93,6 +50,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
   const linkedin = safeWebUrl(profile.linkedin);
   const github = safeWebUrl(profile.github);
   const portrait = profile.showPhoto ? safeWebUrl(content.profileImageUrl) : null;
+  const availability = site.hero.availability.trim();
 
   useEffect(() => { document.title = `${name} | ${site.hero.title}`; }, [name, site.hero.title]);
 
@@ -110,12 +68,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
       setActive(current);
       setScrolled(window.scrollY > 24);
       root?.style.setProperty("--progress", String(max > 0 ? Math.min(1, window.scrollY / max) : 0));
-      const about = aboutRef.current;
-      if (about) {
-        const rect = about.getBoundingClientRect();
-        const p = (window.innerHeight * 0.85 - rect.top) / (rect.height + window.innerHeight * 0.35);
-        about.style.setProperty("--lit", String(Math.min(1, Math.max(0, p))));
-      }
+
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
@@ -136,9 +89,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
     try { await navigator.clipboard.writeText(profile.email); setter(true); } catch { setter(false); }
   }
 
-  const aboutWords = site.about.lead.split(" ");
   return <div className="pcb" ref={rootRef}>
-    <ProbeCursor />
     <a href="#main" className="skip-link">Skip to content</a>
     <header className={`topbar${scrolled ? " is-scrolled" : ""}`}><div className="wrap topbar-inner">
       <a className="brand" href="#home" aria-label={`${name}, home`}><span className="brand-pad" aria-hidden="true" />{name}</a>
@@ -164,7 +115,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
 
     <main id="main">
       <section id="home" className="hero"><div className="wrap">
-        <div className="hero-meta"><span className="led" aria-hidden="true" />{site.hero.kicker}{profile.location && <span className="hero-fact"><MapPin size={15} />{profile.location}</span>}{profile.studyLine && <span className="hero-fact"><BookOpen size={15} />{profile.studyLine}</span>}</div>
+        <div className="hero-meta"><span className="led" aria-hidden="true" />{site.hero.kicker}{profile.location && <span className="hero-fact"><MapPin size={15} />{profile.location}</span>}{profile.studyLine && <span className="hero-fact"><BookOpen size={15} />{profile.studyLine}</span>}{availability && <a className="availability-badge" href="#contact"><span aria-hidden="true" />{availability}<ArrowUpRight size={14} aria-hidden="true" /></a>}</div>
         <h1 className={`hero-name hero-name--${site.hero.nameSize}`}><span className="sr-only">{name}</span>
           <span className="name-line" aria-hidden="true">{Array.from(profile.firstName).map((ch, i) => <span key={i} className="ltr" style={{ "--i": i } as CSSProperties}>{ch}</span>)}{!profile.lastName && <span className="ltr name-dot" style={{ "--i": profile.firstName.length } as CSSProperties}>.</span>}</span>
           {profile.lastName && <span className="name-line name-line-2" aria-hidden="true">{Array.from(profile.lastName).map((ch, i) => <span key={i} className="ltr" style={{ "--i": i + profile.firstName.length } as CSSProperties}>{ch === " " ? "\u00a0" : ch}</span>)}<span className="ltr name-dot" style={{ "--i": profile.firstName.length + profile.lastName.length } as CSSProperties}>.</span></span>}
@@ -172,9 +123,9 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
         <div className="hero-grid">
           <div><p className="hero-title">{site.hero.title}</p>{site.hero.intro && <p className="hero-intro">{site.hero.intro}</p>}</div>
           <div className="hero-actions">
-            {resume && <a className="btn btn-solid" href={resume} target="_blank" rel="noopener noreferrer" data-magnetic><FileText size={17} />{actions.viewResume}<span className="sr-only"> (opens in a new tab)</span></a>}
-            {linkedin && <ExternalLink href={linkedin} className="btn btn-ghost" magnetic><Linkedin size={17} />{actions.linkedin}</ExternalLink>}
-            {github && <ExternalLink href={github} className="btn btn-ghost" magnetic><Github size={17} />{actions.github}</ExternalLink>}
+            {resume && <a className="btn btn-solid" href={resume} target="_blank" rel="noopener noreferrer"><FileText size={17} />{actions.viewResume}<span className="sr-only"> (opens in a new tab)</span></a>}
+            {linkedin && <ExternalLink href={linkedin} className="btn btn-ghost"><Linkedin size={17} />{actions.linkedin}</ExternalLink>}
+            {github && <ExternalLink href={github} className="btn btn-ghost"><Github size={17} />{actions.github}</ExternalLink>}
             <a className="text-link" href="#contact">{actions.contactMe}</a>
           </div>
         </div>
@@ -189,13 +140,13 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
       </div></section>
 
       {site.highlights.length > 0 && <div className="readouts" data-reveal><div className="wrap readout-grid">
-        {site.highlights.map((item, i) => <div key={i}><strong><Value text={item.value} />{item.unit && <span className="unit">{item.unit}</span>}</strong>{item.label && <p>{item.label}</p>}</div>)}
+        {site.highlights.map((item, i) => <div key={i}><strong>{item.value}{item.unit && <span className="unit">{item.unit}</span>}</strong>{item.label && <p>{item.label}</p>}</div>)}
       </div></div>}
 
       <Section id="about" title={sections.about.title} intro={sections.about.intro} className="about">
         <div className="about-body">
           {portrait && <figure className="profile-portrait"><img src={portrait} alt={profile.photoAlt || name} width="240" height="300" loading="lazy" /></figure>}
-          <p className="about-lead" ref={aboutRef} style={{ "--words": aboutWords.length } as CSSProperties}>{aboutWords.map((word, i) => <span key={i} style={{ "--i": i } as CSSProperties}>{word} </span>)}</p>
+          <p className="about-lead">{site.about.lead}</p>
           {site.about.body.split(/\n\s*\n/).filter(Boolean).map((paragraph, i) => <p key={i}>{paragraph}</p>)}
           {site.about.note && <div className="about-note"><ShieldCheck size={20} aria-hidden="true" /><p>{site.about.note}</p></div>}
         </div>
@@ -206,7 +157,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
           {site.education.map((stop, i) => <li key={i} className={i === site.education.length - 1 ? "is-current" : ""} style={{ "--i": i } as CSSProperties}>
             <span className="tl-pad" aria-hidden="true" />
             <span className="tl-year">{stop.year}</span>
-            <div className="tl-card">{stop.level && <p className="tl-level">{stop.level}</p>}<h3>{stop.school}</h3>{stop.detail && <p className="tl-detail">{stop.detail}</p>}{stop.note && <p className="tl-note">{stop.note}</p>}{stop.score && <p className="tl-score"><strong><Value text={stop.score} /></strong>{stop.unit && <span>{stop.unit}</span>}</p>}</div>
+            <div className="tl-card">{stop.level && <p className="tl-level">{stop.level}</p>}<h3>{stop.school}</h3>{stop.detail && <p className="tl-detail">{stop.detail}</p>}{stop.note && <p className="tl-note">{stop.note}</p>}{stop.score && <p className="tl-score"><strong>{stop.score}</strong>{stop.unit && <span>{stop.unit}</span>}</p>}</div>
           </li>)}
         </ol>
       </Section>
@@ -227,18 +178,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
       </Section>
 
       <Section id="projects" title={sections.projects.title} intro={sections.projects.intro}>
-        {content.projects.map(project => {
-          const repository = safeWebUrl(project.github_url); const demo = safeWebUrl(project.demo_url);
-          return <article className="project" key={project.id}>
-            <div className="project-visual">{project.image_url ? <img src={project.image_url} alt={project.title} loading="lazy" /> : <><SolarIllustration /><p className="project-visual-label">{project.technologies[0] || fallback.project}</p></>}</div>
-            <div className="project-body">
-              <h3>{project.title}</h3><p className="project-summary">{project.short_description}</p><Tags items={project.technologies} />
-              <div className="project-details"><h4>{actions.keyFeatures}</h4><p>{project.full_description || fallback.projectDetails}</p></div>
-              {(repository || demo) && <div className="project-links">{repository && <ExternalLink href={repository} className="btn btn-ghost" magnetic><Github size={16} />{actions.repository}</ExternalLink>}{demo && <ExternalLink href={demo} className="btn btn-ghost" magnetic><ArrowUpRight size={16} />{actions.liveDemo}</ExternalLink>}</div>}
-            </div>
-          </article>;
-        })}
-        {content.projects.length === 0 && <p className="muted">{fallback.projects}</p>}
+        <ProjectGallery projects={content.projects} actions={actions} fallback={fallback} />
       </Section>
 
       <Section id="experience" title={sections.experience.title} intro={sections.experience.intro}>
@@ -271,7 +211,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
               <p className="cert-issuer">{certificate.issuer || fallback.issuer}</p>
               <h3>{certificate.title}</h3>
               <p className="cert-desc">{certificate.description || (certificate.issued_on ? `${fallback.completed} ${formatMonth(certificate.issued_on)}` : fallback.completionDetails)}</p>
-              {credential && <ExternalLink href={credential} className="btn btn-ghost" magnetic><FileText size={16} />{actions.certificate}</ExternalLink>}
+              {credential && <ExternalLink href={credential} className="btn btn-ghost"><FileText size={16} />{actions.certificate}</ExternalLink>}
             </div>
           </article>;
         })}
@@ -291,7 +231,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
           <header className="sec-head"><span className="sec-trace" aria-hidden="true" /><h2>{sections.contact.title}</h2></header>
           {sections.contact.intro && <p className="contact-intro">{sections.contact.intro}</p>}
           <div className="contact-email-row"><a className="contact-email" href={`mailto:${profile.email}`}>{profile.email}</a><button type="button" className="icon-btn" onClick={() => copyEmail(setEmailCopied)} aria-label={emailCopied ? form.emailCopied : form.copyEmail}>{emailCopied ? <Check size={17} /> : <Copy size={17} />}</button></div>
-          {(linkedin || github) && <div className="contact-links">{linkedin && <ExternalLink href={linkedin} magnetic><Linkedin size={18} />{actions.linkedin}</ExternalLink>}{github && <ExternalLink href={github} magnetic><Github size={18} />{actions.github}</ExternalLink>}</div>}
+          {(linkedin || github) && <div className="contact-links">{linkedin && <ExternalLink href={linkedin}><Linkedin size={18} />{actions.linkedin}</ExternalLink>}{github && <ExternalLink href={github}><Github size={18} />{actions.github}</ExternalLink>}</div>}
           {site.contact.note && <p className="contact-note"><Mail size={16} aria-hidden="true" />{site.contact.note}</p>}
         </div>
         <form className="form" onSubmit={prepareEmail}>
@@ -301,7 +241,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
           </div>
           <div className="field"><label htmlFor="subject">{form.subjectLabel}</label><input id="subject" name="subject" placeholder={form.subjectPlaceholder} maxLength={150} /></div>
           <div className="field"><label htmlFor="message">{form.messageLabel}</label><textarea id="message" name="message" placeholder={form.messagePlaceholder} required minLength={10} maxLength={4000} rows={5} /></div>
-          <button type="submit" className="btn btn-solid" data-magnetic><Send size={17} />{form.submit}</button>
+          <button type="submit" className="btn btn-solid"><Send size={17} />{form.submit}</button>
           <p className="form-help">{form.help}</p>
           {emailDraft && <div className="draft" role="status"><Check size={18} aria-hidden="true" /><div><p>{form.draftReady}</p><a href={emailDraft} className="text-link">{form.openDraft}</a><button type="button" className="link-btn" onClick={() => copyEmail(setCopied)}>{copied ? form.emailCopied : form.copyEmail}</button></div></div>}
         </form>

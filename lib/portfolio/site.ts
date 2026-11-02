@@ -37,6 +37,7 @@ export const siteContentSchema = z.object({
     kicker: text(80),
     title: required(160, "Enter a headline under your name."),
     intro: text(600),
+    availability: text(80),
     scopeLeft: text(80),
     scopeRight: text(80),
     nameSize: z.enum(["balanced", "large"]),
@@ -65,9 +66,9 @@ export const siteContentSchema = z.object({
   footer: z.object({ tagline: text(120) }),
   labels: z.object({
     nav: z.object({ about: required(40, "Enter a navigation label."), education: required(40, "Enter a navigation label."), skills: required(40, "Enter a navigation label."), projects: required(40, "Enter a navigation label."), experience: required(40, "Enter a navigation label."), certifications: required(40, "Enter a navigation label."), achievements: required(40, "Enter a navigation label."), contact: required(40, "Enter a navigation label.") }),
-    actions: z.object({ resume: text(80), viewResume: text(80), linkedin: text(80), github: text(80), contactMe: text(80), repository: text(80), liveDemo: text(80), keyFeatures: text(80), certificate: text(80), viewDetails: text(80) }),
+    actions: z.object({ resume: text(80), viewResume: text(80), linkedin: text(80), github: text(80), contactMe: text(80), repository: text(80), liveDemo: text(80), keyFeatures: text(80), certificate: text(80), viewDetails: text(80), viewProject: text(80), viewImage: text(80), close: text(80), featured: text(80), backToProject: text(80) }),
     form: z.object({ nameLabel: text(80), namePlaceholder: text(160), emailLabel: text(80), emailPlaceholder: text(160), subjectLabel: text(80), subjectPlaceholder: text(160), messageLabel: text(80), messagePlaceholder: text(300), submit: text(80), help: text(400), draftReady: text(400), openDraft: text(80), copyEmail: text(80), emailCopied: text(80), defaultSubject: text(150), greeting: text(80), from: text(80), replyTo: text(80) }),
-    fallback: z.object({ skills: text(300), projects: text(300), experience: text(300), certifications: text(300), project: text(80), projectDetails: text(1000), organization: text(160), experienceDates: text(160), present: text(40), experienceCategory: text(80), embeddedCategory: text(80), analyticsCategory: text(80), issuer: text(160), completionDetails: text(300), completed: text(80), courseScore: text(80), achievement: text(80), mobileDescription: text(200) }),
+    fallback: z.object({ skills: text(300), projects: text(300), experience: text(300), certifications: text(300), project: text(80), projectDetails: text(1000), projectImageUnavailable: text(300), organization: text(160), experienceDates: text(160), present: text(40), experienceCategory: text(80), embeddedCategory: text(80), analyticsCategory: text(80), issuer: text(160), completionDetails: text(300), completed: text(80), courseScore: text(80), achievement: text(80), mobileDescription: text(200) }),
   }),
 });
 export type SiteContent = z.infer<typeof siteContentSchema>;
@@ -75,6 +76,7 @@ export type SiteContent = z.infer<typeof siteContentSchema>;
 export const defaultSiteContent: SiteContent = {
   "hero": {
     "intro": "Building practical skills in embedded systems, programming, and data analytics, while exploring VLSI, digital design, and semiconductor technology.",
+    "availability": "Open to internships",
     "title": "Electronics and Communication Engineering Student",
     "kicker": "Engineering portfolio",
     "nameSize": "balanced",
@@ -130,7 +132,12 @@ export const defaultSiteContent: SiteContent = {
       "viewResume": "View resume",
       "certificate": "Certificate",
       "keyFeatures": "Key features",
-      "viewDetails": "View details"
+      "viewDetails": "View details",
+      "viewProject": "View project",
+      "viewImage": "View full image",
+      "close": "Close",
+      "featured": "Featured project",
+      "backToProject": "Back to project"
     },
     "fallback": {
       "issuer": "Issuer: to be added",
@@ -145,6 +152,7 @@ export const defaultSiteContent: SiteContent = {
       "organization": "Organization: to be added",
       "certifications": "Certifications will appear here as they are added.",
       "projectDetails": "",
+      "projectImageUnavailable": "Image unavailable. You can still view the project details and repository.",
       "experienceDates": "",
       "embeddedCategory": "Embedded systems",
       "analyticsCategory": "Data analytics",
@@ -350,13 +358,4 @@ export function resolveSiteContent(stored: unknown): SiteContent {
 
 export function fullName(profile: SiteContent["profile"]) {
   return [profile.firstName, profile.lastName].filter(Boolean).join(" ");
-}
-
-// A highlight or score counts up only when it is a plain number; "02" keeps its padding.
-export function countable(value: string) {
-  const trimmed = value.trim();
-  if (!/^\d+(\.\d+)?$/.test(trimmed)) return null;
-  const decimals = trimmed.split(".")[1]?.length ?? 0;
-  const pad = decimals === 0 && trimmed.length > 1 && trimmed.startsWith("0") ? trimmed.length : 0;
-  return { value: Number(trimmed), decimals, pad };
 }
