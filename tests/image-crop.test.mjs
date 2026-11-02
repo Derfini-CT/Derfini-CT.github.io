@@ -14,7 +14,7 @@ test("a centred landscape crop preserves the requested ratio without stretching"
 
 test("zoom and edge positions keep the crop inside the rotated image at every quarter turn", () => {
   for (const rotation of [0, 90, 180, 270, -90, 450]) {
-    for (const aspectRatio of [16 / 9, 4 / 3, 1, null]) {
+    for (const aspectRatio of [16 / 9, 4 / 3, 4 / 5, 1, null]) {
       for (const position of [-1, 0, 1]) {
         const result = crop({ rotation, aspectRatio, zoom: 2, positionX: position, positionY: position });
         assert.ok(result.x >= 0 && result.y >= 0);

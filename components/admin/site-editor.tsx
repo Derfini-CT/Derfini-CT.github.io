@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import ProjectImageEditor from "./project-image-editor";
 import { projectImageBucket } from "@/lib/portfolio/types";
 import { validateProjectImage } from "@/lib/portfolio/validation";
 import { defaultSiteContent, resolveSiteContent, siteContentSchema, type SiteContent } from "@/lib/portfolio/site";
@@ -49,7 +50,11 @@ export default function SiteEditor() {
   const [error, setError] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState("");
+  const [photoSource, setPhotoSource] = useState("");
+  const [photoSourceName, setPhotoSourceName] = useState("profile-photo");
+  const [photoCropOpen, setPhotoCropOpen] = useState(false);
   const [photoRemovalOpen, setPhotoRemovalOpen] = useState(false);
+  const editPhotoRef = useRef<HTMLButtonElement>(null);
   const loaded = useRef(false);
 
   async function fetchSite() {
@@ -59,7 +64,7 @@ export default function SiteEditor() {
       const { data, error } = await supabase.from("site_content").select("data,updated_at").eq("id", 1).maybeSingle();
       // PGRST205 / 42P01: the table has not been created yet (supabase/site-content.sql).
       if (error) { setLoad({ state: error.code === "PGRST205" || error.code === "42P01" ? "missing" : "error" }); return; }
-      setSite(resolveSiteContent(data?.data)); setDirty(false); setError(""); setPhotoFile(null); setPhotoPreview("");
+      setSite(resolveSiteContent(data?.data)); setDirty(false); setError(""); setPhotoFile(null); setPhotoPreview(""); setPhotoSource(""); setPhotoCropOpen(false);
       setLoad({ state: "ready", updatedAt: data?.updated_at ?? null });
     } catch { setLoad({ state: "error" }); }
   }
@@ -71,6 +76,7 @@ export default function SiteEditor() {
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
   useEffect(() => () => { if (photoPreview) URL.revokeObjectURL(photoPreview); }, [photoPreview]);
+  useEffect(() => () => { if (photoSource) URL.revokeObjectURL(photoSource); }, [photoSource]);
 
   function change(next: (current: SiteContent) => SiteContent) { setSite(current => next(current)); setDirty(true); setError(""); }
   const set = <K extends keyof SiteContent>(key: K) => <F extends keyof SiteContent[K]>(field: F) => (value: SiteContent[K][F]) => change(current => ({ ...current, [key]: { ...current[key], [field]: value } }));
@@ -82,10 +88,18 @@ export default function SiteEditor() {
   function choosePhoto(file: File | null) {
     if (!file) return;
     try {
-      validateProjectImage(file); setPhotoFile(file); setPhotoPreview(URL.createObjectURL(file));
-      change(current => ({ ...current, profile: { ...current.profile, showPhoto: true } }));
+      validateProjectImage(file); setPhotoFile(file); setPhotoPreview(URL.createObjectURL(file)); setPhotoSource(URL.createObjectURL(file)); setPhotoSourceName(file.name); setPhotoCropOpen(true);
+      change(current => ({ ...current, profile: { ...current.profile, showPhoto: current.profile.photoPath ? current.profile.showPhoto : true } }));
     } catch (error) { setError(error instanceof Error ? error.message : "Choose a valid profile image."); }
   }
+  function closePhotoCrop() { setPhotoCropOpen(false); setError(""); requestAnimationFrame(() => editPhotoRef.current?.focus()); }
+  function applyPhotoCrop(file: File) {
+    try {
+      validateProjectImage(file); setPhotoFile(file); setPhotoPreview(URL.createObjectURL(file));
+      setDirty(true); closePhotoCrop();
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "The edited profile photo could not be prepared."); }
+  }
+  function resetPhotoChanges() { setPhotoFile(null); setPhotoPreview(""); setPhotoSource(""); setError(""); if (!site.profile.photoPath) profile("showPhoto")(false); }
   async function requireCurrentAdmin() {
     if (!supabase) throw new Error("Supabase is not configured.");
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -97,6 +111,7 @@ export default function SiteEditor() {
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || busy || load.state !== "ready") return;
+    if (photoCropOpen) { setError("Apply or cancel the profile photo crop before saving site content."); return; }
     const parsed = siteContentSchema.safeParse(site);
     if (!parsed.success) { const issue = parsed.error.issues[0]; const where = issue?.path.map(part => typeof part === "number" ? `item ${part + 1}` : part).join(" › "); setError(issue ? `${issue.message}${where ? ` (${where})` : ""}` : "Check the fields and try again."); return; }
     if (parsed.data.profile.showPhoto && !parsed.data.profile.photoPath && !photoFile) { setError("Choose a profile image first, or turn off Show profile photo."); return; }
@@ -119,7 +134,7 @@ export default function SiteEditor() {
         : await supabase.from("site_content").insert({ id: 1, data: savedSite }).select("updated_at").maybeSingle();
       if (result.error) throw new Error("Save could not be confirmed. Your edits are still here; check your admin access and try again.");
       if (!result.data) throw new Error("This text was saved from another tab or device since you opened it. Copy anything you need, then reload the page to see the latest version.");
-      setSite(savedSite); setPhotoFile(null); setPhotoPreview("");
+      setSite(savedSite); setPhotoFile(null); setPhotoPreview(""); setPhotoSource(""); setPhotoCropOpen(false);
       setLoad({ state: "ready", updatedAt: result.data.updated_at }); setDirty(false);
       toast.success("Site content saved. Reload the portfolio to see it.");
     } catch (error) {
@@ -137,7 +152,8 @@ export default function SiteEditor() {
   if (load.state === "error") return <><div className="admin-page-heading"><div><h1>Site content</h1></div></div><div className="admin-error" role="alert">Site content could not be loaded. Check the connection and your admin access.<Button variant="link" onClick={() => void fetchSite()}>Retry</Button></div></>;
 
   const disabled = busy;
-  const currentPhotoUrl = photoPreview || (site.profile.photoPath ? supabase?.storage.from(projectImageBucket).getPublicUrl(site.profile.photoPath).data.publicUrl : "");
+  const savedPhotoUrl = site.profile.photoPath ? supabase?.storage.from(projectImageBucket).getPublicUrl(site.profile.photoPath).data.publicUrl || "" : "";
+  const currentPhotoUrl = photoPreview || savedPhotoUrl;
   return <><form onSubmit={save} className="admin-site-form">
     <div className="admin-page-heading"><div><h1>Site content</h1><p>Every piece of text on the portfolio that isn’t a skill, project, certification, experience or achievement.</p></div></div>
     <nav className="admin-site-jump" aria-label="Jump to a group">{[["profile", "Profile & photo"], ["hero", "Hero"], ["highlights", "Highlights"], ["focus", "Focus areas"], ["about", "About"], ["education", "Education"], ["skills", "Skill groups"], ["headings", "Headings"], ["closing", "Contact & footer"], ["labels", "Buttons & labels"]].map(([id, label]) => <a key={id} href={`#${id}-title`}>{label}</a>)}</nav>
@@ -151,8 +167,9 @@ export default function SiteEditor() {
       <Field id="github" label="GitHub link" value={site.profile.github} onChange={profile("github")} maxLength={2048} help="Empty hides the GitHub buttons." disabled={disabled} />
       <Field id="location" label="Location" value={site.profile.location} onChange={profile("location")} maxLength={80} disabled={disabled} />
       <Field id="study" label="Study line" value={site.profile.studyLine} onChange={profile("studyLine")} maxLength={80} placeholder="B.E. ECE, 3rd year" disabled={disabled} />
-      <div className="admin-site-wide"><label htmlFor="profile-photo">Profile photo (optional)</label><Input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} onChange={event => choosePhoto(event.target.files?.[0] || null)} /><p className="admin-editor-help">Choose a clear portrait in JPEG, PNG or WebP format, up to 5 MB. It uploads when you save. Replacing or removing the displayed photo keeps previous files in Storage.</p>{currentPhotoUrl && <img src={currentPhotoUrl} className="admin-image-preview" alt={site.profile.photoAlt || "Profile photo preview"} />}{(site.profile.photoPath || photoFile) && <Button type="button" variant="outline" disabled={disabled} onClick={() => setPhotoRemovalOpen(true)}>Remove displayed photo</Button>}</div>
-      <div className="admin-site-wide admin-site-switch"><Switch id="profile-photo-show" checked={site.profile.showPhoto} onCheckedChange={value => profile("showPhoto")(value)} disabled={disabled} /><label htmlFor="profile-photo-show">Show profile photo in About</label></div>
+      <div className="admin-site-wide"><label htmlFor="profile-photo">Profile photo (optional)</label><Input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled || photoCropOpen} onChange={event => { choosePhoto(event.target.files?.[0] || null); event.target.value = ""; }} /><p className="admin-editor-help">JPEG, PNG or WebP; up to 5 MB. Crop a new upload or edit the saved photo. The portfolio uses a 4:5 portrait frame. It uploads when you save site content. Previous files stay in Storage.</p>{currentPhotoUrl && <><img src={currentPhotoUrl} className="admin-image-preview admin-profile-image-preview" alt={site.profile.photoAlt || "Profile photo preview"} /><div className="admin-image-actions"><Button ref={editPhotoRef} type="button" variant="outline" disabled={disabled || photoCropOpen} onClick={() => { setPhotoCropOpen(true); setError(""); }}>Crop & edit profile photo</Button>{photoFile && <Button type="button" variant="outline" disabled={disabled || photoCropOpen} onClick={resetPhotoChanges}>{site.profile.photoPath ? "Reset to saved photo" : "Remove new photo"}</Button>}<Button type="button" variant="outline" disabled={disabled || photoCropOpen} onClick={() => setPhotoRemovalOpen(true)}>Remove displayed photo</Button></div>{photoFile && <p className="admin-editor-help" role="status">Photo changes are ready. Save site content to publish them.</p>}</>}</div>
+      {photoCropOpen && (photoSource || savedPhotoUrl) && <div className="admin-site-wide"><ProjectImageEditor purpose="profile" source={photoSource || savedPhotoUrl} sourceName={photoSource ? photoSourceName : "profile-photo"} disabled={busy} onApply={applyPhotoCrop} onCancel={closePhotoCrop} /></div>}
+      <div className="admin-site-wide admin-site-switch"><Switch id="profile-photo-show" checked={site.profile.showPhoto} onCheckedChange={value => profile("showPhoto")(value)} disabled={disabled || photoCropOpen} /><label htmlFor="profile-photo-show">Show profile photo in About</label></div>
       <Field id="profile-photo-alt" label="Photo description" value={site.profile.photoAlt} onChange={profile("photoAlt")} maxLength={160} help="A short description for visitors using a screen reader. Empty uses your name." disabled={disabled} />
     </Group>
 
@@ -232,11 +249,11 @@ export default function SiteEditor() {
     </Group>
 
     <div className="admin-site-savebar" role="region" aria-label="Save site content">
-      {error ? <p className="admin-error" role="alert">{error}</p> : <p>{dirty ? "You have unsaved changes." : "Everything is saved."} <Link href="/" target="_blank" rel="noopener noreferrer">View portfolio</Link></p>}
-      <Button type="button" variant="outline" disabled={busy || !dirty} onClick={() => void fetchSite()}>Discard changes</Button>
-      <Button type="submit" disabled={busy || !dirty}>{busy && <Loader2 className="animate-spin" />}Save site content</Button>
+      {error ? <p className="admin-error" role="alert">{error}</p> : <p>{photoCropOpen ? "Apply or cancel the photo crop to continue." : dirty ? "You have unsaved changes." : "Everything is saved."} <Link href="/" target="_blank" rel="noopener noreferrer">View portfolio</Link></p>}
+      <Button type="button" variant="outline" disabled={busy || photoCropOpen || !dirty} onClick={() => void fetchSite()}>Discard changes</Button>
+      <Button type="submit" disabled={busy || photoCropOpen || !dirty}>{busy && <Loader2 className="animate-spin" />}Save site content</Button>
     </div>
-  </form><AlertDialog open={photoRemovalOpen} onOpenChange={setPhotoRemovalOpen}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Remove the displayed profile photo?</AlertDialogTitle><AlertDialogDescription>The photo will be removed from the portfolio when you save site content. Its file stays in Storage. Cancel keeps the current selection.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => { setPhotoFile(null); setPhotoPreview(""); change(current => ({ ...current, profile: { ...current.profile, photoPath: "", showPhoto: false } })); setPhotoRemovalOpen(false); }}>Remove photo</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog></>;
+  </form><AlertDialog open={photoRemovalOpen} onOpenChange={setPhotoRemovalOpen}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Remove the displayed profile photo?</AlertDialogTitle><AlertDialogDescription>The photo will be removed from the portfolio when you save site content. Its file stays in Storage. Cancel keeps the current selection.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => { resetPhotoChanges(); setPhotoCropOpen(false); change(current => ({ ...current, profile: { ...current.profile, photoPath: "", showPhoto: false } })); setPhotoRemovalOpen(false); }}>Remove photo</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog></>;
 }
 
 function RowTools({ index, count, name, disabled, onMove, onRemove }: { index: number; count: number; name: string; disabled: boolean; onMove: (to: number) => void; onRemove: () => void }) {

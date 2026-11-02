@@ -104,11 +104,13 @@
 .admin-image-preview { max-width: 100%; max-height: 150px; object-fit: contain; margin-top: 14px; border: 1px solid var(--mask-3); border-radius: 8px; }
 .admin-modal-error { margin-block: 5px; }
 .admin-project-image-preview { width: 100%; max-height: 220px; padding: 8px; background: var(--deep); }
+.admin-profile-image-preview { width: 160px; aspect-ratio: 4 / 5; max-height: none; object-fit: cover; }
 .admin-image-actions, .admin-crop-tools, .admin-crop-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .admin-crop-editor { min-width: 0; padding: 18px; border: 1px solid rgb(96 165 250 / 40%); border-radius: 12px; background: var(--deep); }
 .admin-crop-header h3 { color: var(--gold); font-size: 17px; font-weight: 650; outline-offset: 5px; }
 .admin-crop-preview { display: grid; place-items: center; overflow: hidden; width: 100%; max-height: 300px; margin-block: 16px; border: 1px solid var(--mask-3); border-radius: 8px; background: #080f1e; }
 .admin-crop-preview canvas { min-width: 0; min-height: 0; max-height: 300px; }
+.admin-crop-editor--profile .admin-crop-preview { width: min(100%, 240px); margin-inline: auto; }
 .admin-crop-loading { display: flex; align-items: center; gap: 8px; color: var(--silk-2); font-size: 14px; }
 .admin-crop-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; padding: 0; border: 0; min-width: 0; }
 .admin-crop-controls legend { padding: 0; margin-bottom: 12px; color: var(--silk-2); font-size: 13px; }

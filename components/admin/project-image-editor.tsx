@@ -8,12 +8,14 @@ import { calculateImageCrop, imageCropTransform, validateCropImageDimensions, ty
 export type ProjectImageEditorProps = {
   source: string;
   sourceName?: string;
+  purpose?: "project" | "profile";
   disabled?: boolean;
   onApply: (file: File) => void;
   onCancel: () => void;
 };
 
 const ratios = [
+  { value: "4:5", label: "4:5 portrait", ratio: 4 / 5 },
   { value: "16:9", label: "16:9", ratio: 16 / 9 },
   { value: "4:3", label: "4:3", ratio: 4 / 3 },
   { value: "1:1", label: "Square", ratio: 1 },
@@ -42,7 +44,9 @@ export default function ProjectImageEditor(props: ProjectImageEditorProps) {
   return <ProjectImageEditorSession key={props.source} {...props} />;
 }
 
-function ProjectImageEditorSession({ source, sourceName, disabled = false, onApply, onCancel }: ProjectImageEditorProps) {
+function ProjectImageEditorSession({ source, sourceName, purpose = "project", disabled = false, onApply, onCancel }: ProjectImageEditorProps) {
+  const isProfile = purpose === "profile";
+  const initialRatio = isProfile ? "4:5" : "16:9";
   const id = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const previewRef = useRef<HTMLCanvasElement>(null);
@@ -53,7 +57,7 @@ function ProjectImageEditorSession({ source, sourceName, disabled = false, onApp
   const [paintedVersion, setPaintedVersion] = useState("");
   const [previewAttempt, setPreviewAttempt] = useState(0);
   const [busy, setBusy] = useState(false);
-  const [ratio, setRatio] = useState<(typeof ratios)[number]["value"]>("16:9");
+  const [ratio, setRatio] = useState<(typeof ratios)[number]["value"]>(initialRatio);
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [positionX, setPositionX] = useState(0);
@@ -108,7 +112,7 @@ function ProjectImageEditorSession({ source, sourceName, disabled = false, onApp
   }, [image, rotation, selectedRatio.ratio, zoom, positionX, positionY, previewVersion]);
 
   function reset() {
-    setRatio("16:9"); setRotation(0); setZoom(1); setPositionX(0); setPositionY(0); setError(""); setPreviewAttempt(current => current + 1);
+    setRatio(initialRatio); setRotation(0); setZoom(1); setPositionX(0); setPositionY(0); setError(""); setPreviewAttempt(current => current + 1);
   }
 
   async function apply() {
@@ -121,7 +125,8 @@ function ProjectImageEditorSession({ source, sourceName, disabled = false, onApp
       if (blob.size > 5 * 1024 * 1024) blob = await encodeJpeg(canvas, 0.8);
       if (blob.size > 5 * 1024 * 1024) throw new Error("The cropped image is larger than 5 MB. Zoom in further and try again.");
       if (!activeRef.current) return;
-      const baseName = (sourceName || "project-image").replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 80) || "project-image";
+      const fallbackName = isProfile ? "profile-photo" : "project-image";
+      const baseName = (sourceName || fallbackName).replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 80) || fallbackName;
       onApply(new File([blob], `${baseName}-cropped.jpg`, { type: "image/jpeg", lastModified: Date.now() }));
     } catch (cause) {
       if (activeRef.current) setError(cause instanceof Error ? cause.message : "The crop could not be created. Please try again.");
@@ -130,21 +135,21 @@ function ProjectImageEditorSession({ source, sourceName, disabled = false, onApp
     }
   }
 
-  return <section className="admin-crop-editor" aria-labelledby={`${id}-title`} aria-busy={busy}>
-    <div className="admin-crop-header"><h3 ref={headingRef} tabIndex={-1} id={`${id}-title`}>Crop and edit image</h3><p className="admin-editor-help">Zoom, rotate, or frame the image. Cancel crop keeps your selected image unchanged. Public cards adapt to the screen and may trim the saved crop’s edges.</p></div>
-    <div className="admin-crop-preview" style={{ aspectRatio: geometry ? `${geometry.outputWidth} / ${geometry.outputHeight}` : "16 / 9" }}>
+  return <section className={`admin-crop-editor${isProfile ? " admin-crop-editor--profile" : ""}`} aria-labelledby={`${id}-title`} aria-busy={busy}>
+    <div className="admin-crop-header"><h3 ref={headingRef} tabIndex={-1} id={`${id}-title`}>{isProfile ? "Crop and edit profile photo" : "Crop and edit image"}</h3><p className="admin-editor-help">Zoom, rotate, or frame the image. Cancel crop keeps your selected image unchanged. {isProfile ? "The About section uses a 4:5 portrait frame. Other ratios may have their edges trimmed when displayed." : "Public cards adapt to the screen and may trim the saved crop’s edges."}</p></div>
+    <div className="admin-crop-preview" style={{ aspectRatio: geometry ? `${geometry.outputWidth} / ${geometry.outputHeight}` : isProfile ? "4 / 5" : "16 / 9" }}>
       {!image && !error && <p className="admin-crop-loading" role="status"><Loader2 className="animate-spin" aria-hidden="true" />Loading image…</p>}
-      <canvas ref={previewRef} aria-label="Project image crop preview" role="img" hidden={!image} style={{ display: image ? "block" : "none", width: "100%", height: "100%", objectFit: "contain" }} />
+      <canvas ref={previewRef} aria-label={isProfile ? "Profile photo crop preview" : "Project image crop preview"} role="img" hidden={!image} style={{ display: image ? "block" : "none", width: "100%", height: "100%", objectFit: "contain" }} />
     </div>
     <fieldset className="admin-crop-controls" disabled={blocked || !image}>
       <legend>Crop controls</legend>
-      <div className="admin-crop-field"><label htmlFor={`${id}-ratio`}>Aspect ratio</label><select id={`${id}-ratio`} value={ratio} onChange={event => { setRatio(event.target.value as typeof ratio); setPositionX(0); setPositionY(0); }}>{ratios.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select><p className="admin-editor-help">16:9 is a useful starting point for landscape images. Choose Original to keep the image’s proportions.</p></div>
+      <div className="admin-crop-field"><label htmlFor={`${id}-ratio`}>Aspect ratio</label><select id={`${id}-ratio`} value={ratio} onChange={event => { setRatio(event.target.value as typeof ratio); setPositionX(0); setPositionY(0); }}>{ratios.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select><p className="admin-editor-help">{isProfile ? "4:5 portrait matches your profile photo on the portfolio." : "16:9 is a useful starting point for landscape images."} Choose Original to keep the image’s proportions.</p></div>
       <div className="admin-crop-field"><label htmlFor={`${id}-zoom`}>Zoom <output htmlFor={`${id}-zoom`}>{zoom.toFixed(2)}×</output></label><input id={`${id}-zoom`} type="range" min="1" max="3" step="0.01" value={zoom} onChange={event => setZoom(Number(event.target.value))} /></div>
       <div className="admin-crop-field"><label htmlFor={`${id}-horizontal`}>Horizontal position <output htmlFor={`${id}-horizontal`}>{Math.round((positionX + 1) * 50)}%</output></label><input id={`${id}-horizontal`} type="range" min="-1" max="1" step="0.01" value={positionX} onChange={event => setPositionX(Number(event.target.value))} disabled={blocked || !image || (geometry !== null && Math.abs(geometry.rotatedWidth - geometry.width) < 0.01)} /></div>
       <div className="admin-crop-field"><label htmlFor={`${id}-vertical`}>Vertical position <output htmlFor={`${id}-vertical`}>{Math.round((positionY + 1) * 50)}%</output></label><input id={`${id}-vertical`} type="range" min="-1" max="1" step="0.01" value={positionY} onChange={event => setPositionY(Number(event.target.value))} disabled={blocked || !image || (geometry !== null && Math.abs(geometry.rotatedHeight - geometry.height) < 0.01)} /></div>
       <div className="admin-crop-tools"><Button type="button" variant="outline" onClick={() => { setRotation(current => (current + 90) % 360); setPositionX(0); setPositionY(0); }}><RotateCw aria-hidden="true" />Rotate 90°</Button><Button type="button" variant="outline" onClick={reset}><RotateCcw aria-hidden="true" />Reset</Button></div>
     </fieldset>
-    {geometry && <p className="admin-editor-help">Crop output: {geometry.outputWidth} × {geometry.outputHeight} pixels. Saved as JPEG; transparent areas become white. Apply crop prepares the image. Save the project to publish it.</p>}
+    {geometry && <p className="admin-editor-help">Crop output: {geometry.outputWidth} × {geometry.outputHeight} pixels. Saved as JPEG; transparent areas become white. Apply crop prepares the image. {isProfile ? "Save site content to publish it." : "Save the project to publish it."}</p>}
     {previewError && <p className="admin-error admin-crop-error" role="alert">{previewError}</p>}
     {error && <p className="admin-error admin-crop-error" role="alert">{error}</p>}
     <div className="admin-crop-actions"><Button type="button" variant="outline" disabled={blocked} onClick={onCancel}>Cancel crop</Button><Button type="button" disabled={blocked || !previewReady} onClick={() => void apply()}>{busy && <Loader2 className="animate-spin" aria-hidden="true" />}Apply crop</Button></div>
