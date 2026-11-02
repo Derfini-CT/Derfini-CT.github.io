@@ -1,0 +1,8 @@
+/* A decorative desktop accent. Native pointer and text cursors stay available. */
+.portfolio-cursor-ring { display: none; position: fixed; inset: 0 auto auto 0; width: 0; height: 0; z-index: 90; pointer-events: none; visibility: hidden; }
+.portfolio-cursor-ring > span { display: block; width: 22px; height: 22px; border: 1px solid rgb(96 165 250 / 65%); border-radius: 50%; background: rgb(96 165 250 / 3%); transform: translate(-50%, -50%); transition: width 140ms ease-out, height 140ms ease-out, border-color 140ms ease-out, background-color 140ms ease-out; }
+.portfolio-cursor-ring.is-visible { visibility: visible; will-change: transform; }
+.portfolio-cursor-ring.is-interactive > span { width: 34px; height: 34px; border-color: #93c5fd; background: rgb(96 165 250 / 8%); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  .portfolio-cursor-ring { display: block; }
+}
