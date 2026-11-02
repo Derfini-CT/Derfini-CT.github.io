@@ -68,7 +68,7 @@ Browser guards send unauthenticated or unauthorized users to `/admin/`. Exported
 
 **Site content → Hero → Availability badge** edits or hides the internship availability line; an empty value hides it. **Buttons and card labels** contains View project, View full image, Close, Featured project and Back to project. The image error message is in **Empty states and supporting labels**. Existing saved content gains these defaults without a database migration.
 
-The first two public projects, in display order, are featured. All public projects remain visible as summaries with repository/demo links. **View project** opens the full saved description; selecting an image opens an uncropped full-size view. Escape or Close dismisses the dialog and returns keyboard focus to its launch button. The public site uses the normal browser pointer; hero, hover, section and waveform effects remain, with reduced-motion support.
+The first two public projects, in display order, are featured. All public projects remain visible as summaries with repository/demo links. **View project** opens the full saved description; selecting an image opens an uncropped full-size view. Escape or Close dismisses the dialog and returns keyboard focus to its launch button. Desktop mouse users see the original glowing probe cursor, eased ring and fading trail. Text fields, keyboard navigation, touch, reduced-motion and forced-colour settings retain native cursors. Hero, hover, section and waveform effects remain.
 
 ## Supabase setup
 

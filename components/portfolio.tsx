@@ -8,7 +8,7 @@ import { safeWebUrl } from "@/lib/portfolio/validation";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Scope from "@/components/pcb/scope";
 import ProjectGallery from "@/components/pcb/project-gallery";
-import CursorRing from "@/components/pcb/cursor-ring";
+import ProbeCursor from "@/components/pcb/probe-cursor";
 import "@/components/pcb/pcb.css";
 
 const navigationIds = ["about", "education", "skills", "projects", "experience", "certifications", "achievements", "contact"] as const;
@@ -91,7 +91,7 @@ export default function Portfolio({ content }: { content: PortfolioContent }) {
   }
 
   return <div className="pcb" ref={rootRef}>
-    <CursorRing />
+    <ProbeCursor />
     <a href="#main" className="skip-link">Skip to content</a>
     <header className={`topbar${scrolled ? " is-scrolled" : ""}`}><div className="wrap topbar-inner">
       <a className="brand" href="#home" aria-label={`${name}, home`}><span className="brand-pad" aria-hidden="true" />{name}</a>
